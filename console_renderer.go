@@ -7,6 +7,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"strings"
 	"tafferl/lib/game_log"
+	strings2 "tafferl/lib/strings"
 	"tafferl/lib/tcell_console_wrapper"
 )
 
@@ -47,7 +48,7 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, flush bool) {
 		}
 	}
 
-	rs.renderUiOutline()
+	rs.renderUi()
 
 	for _, f := range gm.furnitures {
 		rs.drawFurniture(f)
@@ -63,22 +64,42 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, flush bool) {
 	cw.FlushScreen()
 }
 
-func (rs *rendererStruct) renderUiOutline() {
+func (rs *rendererStruct) renderUi() {
 	w, _ := cw.GetConsoleSize()
+	uiX := rs.viewportW
+	uiW := w - uiX
 	cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
-	if CURRENT_MAP.player.isNotConcealed() {
+	lightStatusStr := ".. Concealed .."
+	if rs.gm.getFurnitureAt(rs.gm.player.getCoords()) != nil {
+		cw.SetStyle(tcell.ColorBlack, tcell.ColorDarkGreen)
+		lightStatusStr = "? Hidden ?"
+	}
+	if rs.gm.player.isNotConcealed() {
 		cw.SetStyle(tcell.ColorBlack, tcell.ColorYellow)
+		lightStatusStr = "! Exposed !"
 	}
-	if CURRENT_MAP.player.isRunning {
+	cw.PutString(strings2.CenterStringWithSpaces(lightStatusStr, uiW), uiX, 0)
+
+	cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
+	movementStatusStr := "Walking slowly"
+	if rs.gm.player.isRunning {
 		cw.SetStyle(tcell.ColorBlack, tcell.ColorRed)
+		movementStatusStr = "!!! Running !!!"
 	}
-	for x := 0; x < w; x++ {
-		// cw.PutChar(' ', x, 0)
-		cw.PutChar(' ', x, rs.viewportH-1)
-	}
-	for y := 0; y < rs.viewportW; y++ {
-		cw.PutChar(' ', rs.viewportW, y)
-	}
+	cw.PutString(strings2.CenterStringWithSpaces("(R): "+movementStatusStr, uiW), uiX, 1)
+	cw.SetStyle(tcell.ColorDarkGray, tcell.ColorBlack)
+	hpString := fmt.Sprintf("HLTH %d/%d  GLD $%d",
+		rs.gm.player.hp, rs.gm.player.getStaticData().maxhp, rs.gm.player.inv.gold)
+	cw.PutString(strings2.CenterStringWithSpaces(hpString, uiW), uiX, 2)
+
+	//cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
+	//for x := 0; x < w; x++ {
+	//	// cw.PutChar(' ', x, 0)
+	//	cw.PutChar(' ', x, rs.viewportH-1)
+	//}
+	//for y := 0; y < rs.viewportW; y++ {
+	//	cw.PutChar(' ', rs.viewportW, y)
+	//}
 }
 
 func (rs *rendererStruct) drawTile(tile *tileStruct, onScreenX, onScreenY int, isSeenNow bool) {
@@ -156,7 +177,7 @@ func (rs *rendererStruct) drawPawn(p *pawn) {
 	char := '?'
 	switch p.code {
 	case PAWN_PLAYER:
-		furnUnderPlayer := CURRENT_MAP.getFurnitureAt(CURRENT_MAP.player.x, CURRENT_MAP.player.y)
+		furnUnderPlayer := rs.gm.getFurnitureAt(rs.gm.player.x, rs.gm.player.y)
 		inverse := furnUnderPlayer != nil && furnUnderPlayer.getStaticData().canBeUsedAsCover
 		if isInLight {
 			if inverse {
@@ -238,8 +259,8 @@ func (rs *rendererStruct) drawFurniture(f *furniture) {
 }
 
 func (rs *rendererStruct) renderNoisesForPlayer() {
-	for _, n := range CURRENT_MAP.noises {
-		if !CURRENT_MAP.currentPlayerVisibilityMap[n.x][n.y] || !n.showOnlyNotSeen {
+	for _, n := range rs.gm.noises {
+		if !rs.gm.currentPlayerVisibilityMap[n.x][n.y] || !n.showOnlyNotSeen {
 			// render only those noises in player's vicinity
 			if rs.gm.canPawnHearNoise(rs.gm.player, n) {
 				if n.textBubble != "" {
