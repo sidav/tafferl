@@ -1,0 +1,38 @@
+{
+  "BriefingText": "Well, in this very,very long briefing I got to know that I have to steal lord Manderley's family jewels. All three of them.",
+  "DebriefingText": "I won.",
+  "AdditionalStartingGold": 50,
+  "MissionType": 0,
+  "DifficultyChoosingStr": "When should I go?",
+  "DifficultyLevelsNames": [
+   "As late as possible",
+   "Tomorrow night",
+   "Tonight"
+  ],
+  "TargetNumber": [2, 3, 3],
+  "TargetItemsNames": [
+   "Family Diamond",
+   "Family Emerald",
+   "Family Ruby"
+  ],
+  "AdditionalGuardsNumber": [
+   0,
+   3,
+   6
+  ],
+  "NumberOfArchersFromGuards": [
+    2,
+    3,
+    4
+  ],
+  "Rewards": [
+   500,
+   750,
+   800
+  ],
+  "TotalLoot": [
+   300,
+   400,
+   500
+  ]
+ }
