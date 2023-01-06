@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
 	"strings"
-	"tafferlraylib/game_log"
+	"tafferlraylib/lib/game_log"
+	"tafferlraylib/lib/tcell_console_wrapper"
 )
 
-var cw consoleWrapper
+var cw tcell_console_wrapper.ConsoleWrapper
 
 type rendererStruct struct {
 	gm                   *gameMap
@@ -22,7 +23,7 @@ func (rs *rendererStruct) initDefaults() {
 }
 
 func (rs *rendererStruct) updateSizes() {
-	cwid, chei := cw.getConsoleSize()
+	cwid, chei := cw.GetConsoleSize()
 	rs.viewportW = 2 * cwid / 3
 	rs.viewportH = 3 * chei / 4
 	rs.camX, rs.camY = rs.gm.player.getCoords()
@@ -34,7 +35,7 @@ func (rs *rendererStruct) updateSizes() {
 func (rs *rendererStruct) renderGameScreen(gm *gameMap, flush bool) {
 	rs.gm = gm
 	rs.updateSizes()
-	cw.clearScreen()
+	cw.ClearScreen()
 	mw, mh := gm.getSize()
 	// TODO: optimize: iterate through viewport, not through all tiles
 	for x := 0; x < mw; x++ {
@@ -56,7 +57,7 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, flush bool) {
 	}
 
 	rs.renderLog()
-	cw.flushScreen()
+	cw.FlushScreen()
 }
 
 func (rs *rendererStruct) drawTile(tile *tileStruct, onScreenX, onScreenY int, isSeenNow bool) {
@@ -68,52 +69,52 @@ func (rs *rendererStruct) drawTile(tile *tileStruct, onScreenX, onScreenY int, i
 	switch tile.code {
 	case TILE_FLOOR:
 		if isInLight {
-			cw.setStyle(tcell.ColorWhite, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorNavy, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
 		if !isSeenNow {
-			cw.setStyle(tcell.ColorDarkGray, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorDarkGray, tcell.ColorBlack)
 		}
 		char = '.'
 	case TILE_RUBBISH:
 		if isInLight {
-			cw.setStyle(tcell.ColorWhite, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorNavy, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
 		if !isSeenNow {
-			cw.setStyle(tcell.ColorDarkGray, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorDarkGray, tcell.ColorBlack)
 		}
 		char = ','
 	case TILE_WINDOW:
 		if isInLight {
-			cw.setStyle(tcell.ColorBlueViolet, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorBlueViolet, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorNavy, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
 		if !isSeenNow {
-			cw.setStyle(tcell.ColorDarkGray, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorDarkGray, tcell.ColorBlack)
 		}
 		char = ':'
 	case TILE_WALL:
 		if isInLight {
-			cw.setStyle(tcell.ColorBlack, tcell.ColorRed)
+			cw.SetStyle(tcell.ColorBlack, tcell.ColorRed)
 		} else {
-			cw.setStyle(tcell.ColorBlack, tcell.ColorNavy)
+			cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
 		}
 		if !isSeenNow {
-			cw.setStyle(tcell.ColorBlack, tcell.ColorDarkGray)
+			cw.SetStyle(tcell.ColorBlack, tcell.ColorDarkGray)
 		}
 		char = ' '
 	case TILE_DOOR:
 		if isInLight {
-			cw.setStyle(tcell.ColorBlue, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorBlue, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorNavy, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
 		if !isSeenNow {
-			cw.setStyle(tcell.ColorBlack, tcell.ColorDarkGray)
+			cw.SetStyle(tcell.ColorBlack, tcell.ColorDarkGray)
 		}
 		if tile.isOpened {
 			char = '\\'
@@ -121,7 +122,7 @@ func (rs *rendererStruct) drawTile(tile *tileStruct, onScreenX, onScreenY int, i
 			char = '+'
 		}
 	}
-	cw.putChar(char, onScreenX, onScreenY)
+	cw.PutChar(char, onScreenX, onScreenY)
 }
 
 func (rs *rendererStruct) drawPawn(p *pawn) {
@@ -134,25 +135,25 @@ func (rs *rendererStruct) drawPawn(p *pawn) {
 	switch p.code {
 	case PAWN_PLAYER:
 		if isInLight {
-			cw.setStyle(tcell.ColorWhite, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorNavy, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
-		cw.putChar('@', sx, sy)
+		cw.PutChar('@', sx, sy)
 	case PAWN_GUARD:
 		if isInLight {
-			cw.setStyle(tcell.ColorRed, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorRed, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorDarkRed, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorDarkRed, tcell.ColorBlack)
 		}
-		cw.putChar('G', sx, sy)
+		cw.PutChar('G', sx, sy)
 	case PAWN_ARCHER:
 		if isInLight {
-			cw.setStyle(tcell.ColorRed, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorRed, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorDarkRed, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorDarkRed, tcell.ColorBlack)
 		}
-		cw.putChar('A', sx, sy)
+		cw.PutChar('A', sx, sy)
 	}
 }
 
@@ -166,37 +167,37 @@ func (rs *rendererStruct) drawFurniture(f *furniture) {
 	switch f.code {
 	case FURNITURE_TORCH:
 		if isInLight {
-			cw.setStyle(tcell.ColorYellow, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorYellow, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorNavy, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
-		cw.putChar('|', sx, sy)
+		cw.PutChar('|', sx, sy)
 	case FURNITURE_CABINET:
 		if isInLight {
-			cw.setStyle(tcell.ColorDarkRed, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorDarkRed, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorNavy, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
-		cw.putChar('&', sx, sy)
+		cw.PutChar('&', sx, sy)
 	case FURNITURE_TABLE:
 		if isInLight {
-			cw.setStyle(tcell.ColorGreen, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorGreen, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorNavy, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
-		cw.putChar('=', sx, sy)
+		cw.PutChar('=', sx, sy)
 	case FURNITURE_BUSH:
 		if isInLight {
-			cw.setStyle(tcell.ColorGreen, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorGreen, tcell.ColorBlack)
 		} else {
-			cw.setStyle(tcell.ColorNavy, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
-		cw.putChar('"', sx, sy)
+		cw.PutChar('"', sx, sy)
 	}
 }
 
 func (rs *rendererStruct) putTextInRect(text string, x, y, w int) {
-	cw.putTextInRect(text, x, y, w)
+	cw.PutTextInRect(text, x, y, w)
 }
 
 func (rs *rendererStruct) areCoordsInViewport(gx, gy int) bool {
@@ -213,20 +214,20 @@ func (rs *rendererStruct) onScreenToGlobal(sx, sy int) (int, int) {
 }
 
 func (rs *rendererStruct) renderLog() {
-	_, y := cw.getConsoleSize()
+	_, y := cw.GetConsoleSize()
 	y -= len(log.Last_msgs)
-	width, _ := cw.getConsoleSize()
+	width, _ := cw.GetConsoleSize()
 	for i, msg := range log.Last_msgs {
 		switch msg.Type {
 		case game_log.MSG_REGULAR:
-			cw.setStyle(tcell.ColorWhite, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
 		case game_log.MSG_WARNING:
-			cw.setStyle(tcell.ColorWhite, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
 		}
 		message := msg.Message
 		if msg.Count > 1 {
 			message += fmt.Sprintf("(x%d)", msg.Count)
 		}
-		cw.putString(message+strings.Repeat(" ", width-len(message)), 0, y+i)
+		cw.PutString(message+strings.Repeat(" ", width-len(message)), 0, y+i)
 	}
 }

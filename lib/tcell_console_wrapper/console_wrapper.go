@@ -1,18 +1,16 @@
-//go:build console
-
-package main
+package tcell_console_wrapper
 
 import (
 	"github.com/gdamore/tcell/v2"
 	"strings"
 )
 
-type consoleWrapper struct {
+type ConsoleWrapper struct {
 	screen tcell.Screen
 	style  tcell.Style
 }
 
-func (c *consoleWrapper) init() {
+func (c *ConsoleWrapper) Init() {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	var e error
 	c.screen, e = tcell.NewScreen()
@@ -23,65 +21,65 @@ func (c *consoleWrapper) init() {
 		panic(e)
 	}
 	// c.screen.EnableMouse()
-	c.setStyle(tcell.ColorWhite, tcell.ColorBlack)
+	c.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
 	c.screen.SetStyle(c.style)
 	c.screen.Clear()
 }
 
-func (c *consoleWrapper) close() {
+func (c *ConsoleWrapper) Close() {
 	c.screen.Fini()
 }
 
-func (c *consoleWrapper) clearScreen() {
+func (c *ConsoleWrapper) ClearScreen() {
 	c.screen.Clear()
 }
 
-func (c *consoleWrapper) flushScreen() {
+func (c *ConsoleWrapper) FlushScreen() {
 	c.screen.Show()
 }
 
-func (c *consoleWrapper) getConsoleSize() (int, int) {
+func (c *ConsoleWrapper) GetConsoleSize() (int, int) {
 	return c.screen.Size()
 }
 
-func (c *consoleWrapper) putChar(chr rune, x, y int) {
+func (c *ConsoleWrapper) PutChar(chr rune, x, y int) {
 	c.screen.SetCell(x, y, c.style, chr)
 }
 
-func (c *consoleWrapper) putString(str string, x, y int) {
+func (c *ConsoleWrapper) PutString(str string, x, y int) {
 	for i := 0; i < len(str); i++ {
 		c.screen.SetCell(x+i, y, c.style, rune(str[i]))
 	}
 }
 
-func (c *consoleWrapper) setStyle(fg, bg tcell.Color) {
+func (c *ConsoleWrapper) SetStyle(fg, bg tcell.Color) {
 	c.style = c.style.Background(bg).Foreground(fg)
 }
 
-func (c *consoleWrapper) resetStyle() {
-	c.setStyle(tcell.ColorWhite, tcell.ColorBlack)
+func (c *ConsoleWrapper) ResetStyle() {
+	c.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
 }
 
-func (c *consoleWrapper) drawFilledRect(char rune, fx, fy, w, h int) {
+func (c *ConsoleWrapper) DrawFilledRect(char rune, fx, fy, w, h int) {
 	for x := fx; x <= fx+w; x++ {
 		for y := fy; y <= fy+h; y++ {
-			c.putChar(char, x, y)
+			c.PutChar(char, x, y)
 		}
 	}
 }
 
-func (c *consoleWrapper) drawRect(fx, fy, w, h int) {
+func (c *ConsoleWrapper) DrawRect(fx, fy, w, h int) {
 	for x := fx; x <= fx+w; x++ {
-		c.putChar(' ', x, fy)
-		c.putChar(' ', x, fy+h)
+		c.PutChar(' ', x, fy)
+		c.PutChar(' ', x, fy+h)
 	}
 	for y := fy; y <= fy+h; y++ {
-		c.putChar(' ', fx, y)
-		c.putChar(' ', fx+w, y)
+		c.PutChar(' ', fx, y)
+		c.PutChar(' ', fx+w, y)
 	}
 }
 
-func (c *consoleWrapper) readKey() string {
+func (c *ConsoleWrapper) ReadKey() string {
 	for {
 		ev := c.screen.PollEvent()
 		switch ev := ev.(type) {
@@ -125,9 +123,9 @@ func eventToKeyString(ev *tcell.EventKey) string {
 	}
 }
 
-func (c *consoleWrapper) putTextInRect(text string, x, y, w int) {
+func (c *ConsoleWrapper) PutTextInRect(text string, x, y, w int) {
 	if w == 0 {
-		w, _ = cw.getConsoleSize()
+		w, _ = c.GetConsoleSize()
 	}
 	cx, cy := x, y
 	splittedText := strings.Split(text, " ")
@@ -137,7 +135,7 @@ func (c *consoleWrapper) putTextInRect(text string, x, y, w int) {
 			cy += 1
 		}
 		if word != "\\n" && word != "\n" {
-			cw.putString(word, cx, cy)
+			c.PutString(word, cx, cy)
 			cx += len(word) + 1
 		}
 	}

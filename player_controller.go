@@ -4,7 +4,7 @@ type playerController struct {
 }
 
 func (p *playerController) playerControl(gm *gameMap) {
-	key := cw.readKey()
+	key := cw.ReadKey()
 	if key == "ESCAPE" {
 		GAME_IS_RUNNING = false
 	}

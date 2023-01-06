@@ -46,7 +46,7 @@ func (hm *helpMenu) accessHelpMenu() {
 	menuActive := true
 	for menuActive {
 		// renderer.renderHelpMenu(hm)
-		key := cw.readKey()
+		key := cw.ReadKey()
 		switch key {
 		case "ENTER", "ESCAPE":
 			menuActive = false

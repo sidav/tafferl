@@ -43,12 +43,12 @@ func (m *missionInitializer) generateAndInitMap(filesPath string) {
 	}
 
 	// show briefing
-	cw.clearScreen()
+	cw.ClearScreen()
 	renderer.putTextInRect(currMission.BriefingText, 0, 0, 0)
-	cw.flushScreen()
-	key := cw.readKey()
+	cw.FlushScreen()
+	key := cw.ReadKey()
 	for key != "ESCAPE" && key != "ENTER" {
-		key = cw.readKey()
+		key = cw.ReadKey()
 	}
 	//currDifficultyNumber = console_menu.ShowSingleChoiceMenu(
 	//	"Select difficulty:", currMission.DifficultyChoosingStr, currMission.DifficultyLevelsNames,

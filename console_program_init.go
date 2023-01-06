@@ -3,9 +3,9 @@
 package main
 
 func beforeRun() {
-	cw.init()
+	cw.Init()
 }
 
 func beforeExit() {
-	cw.close()
+	cw.Close()
 }

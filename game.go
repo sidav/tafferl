@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/sidav/golibrl/random/additive_random"
-	log2 "tafferlraylib/game_log"
+	log2 "tafferlraylib/lib/game_log"
 )
 
 var (
@@ -88,20 +88,20 @@ func (g *game) mainLoop() {
 }
 
 func gameover() {
-	cw.clearScreen()
-	cw.putString("You are dead! Press ENTER to exit.", 0, 0)
-	cw.flushScreen()
+	cw.ClearScreen()
+	cw.PutString("You are dead! Press ENTER to exit.", 0, 0)
+	cw.FlushScreen()
 	GAME_IS_RUNNING = false
-	for cw.readKey() != "ENTER" {
+	for cw.ReadKey() != "ENTER" {
 
 	}
 }
 
 func gamewon() {
-	cw.clearScreen()
-	cw.putString(currMission.DebriefingText, 0, 0)
-	cw.flushScreen()
-	for cw.readKey() != "ENTER" {
+	cw.ClearScreen()
+	cw.PutString(currMission.DebriefingText, 0, 0)
+	cw.FlushScreen()
+	for cw.ReadKey() != "ENTER" {
 
 	}
 	CURRENT_MISSION_WON = true
