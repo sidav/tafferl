@@ -1,6 +1,6 @@
 package main
 
-import "github.com/sidav/parcelcreationtool/parcel"
+import "tafferlraylib/parcelcreationtool/parcel"
 
 type aiState uint8
 

@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	generator2 "github.com/sidav/parcelcreationtool/generator"
 	"io/ioutil"
+	generator2 "tafferlraylib/parcelcreationtool/generator"
 )
 
 type missionInitializer struct {
