@@ -1,6 +1,6 @@
 package generator
 
-import . "tafferlraylib/parcelcreationtool/parcel"
+import . "tafferl/parcelcreationtool/parcel"
 
 type Level struct {
 	Terrain [][]rune

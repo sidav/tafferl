@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gdamore/tcell/v2"
 	"strconv"
-	"tafferlraylib/parcelcreationtool/generator"
+	"tafferl/parcelcreationtool/generator"
 )
 
 func generateAndRenderSample() {

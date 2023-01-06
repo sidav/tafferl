@@ -2,9 +2,9 @@ package generator
 
 import (
 	"io/ioutil"
-	"tafferlraylib/lib/random"
-	"tafferlraylib/lib/random/pcgrandom"
-	. "tafferlraylib/parcelcreationtool/parcel"
+	"tafferl/lib/random"
+	"tafferl/lib/random/pcgrandom"
+	. "tafferl/parcelcreationtool/parcel"
 )
 
 var rnd random.PRNG

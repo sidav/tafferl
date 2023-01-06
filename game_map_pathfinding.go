@@ -1,7 +1,7 @@
 package main
 
 import (
-	"tafferlraylib/lib/pathfinding/astar"
+	"tafferl/lib/pathfinding/astar"
 )
 
 var (

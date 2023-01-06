@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	generator2 "tafferlraylib/parcelcreationtool/generator"
+	generator2 "tafferl/parcelcreationtool/generator"
 )
 
 type missionInitializer struct {

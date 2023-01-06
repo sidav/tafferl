@@ -1,7 +1,7 @@
 package main
 
 import (
-	"tafferlraylib/lib/calculations"
+	"tafferl/lib/calculations"
 )
 
 func (p *pawn) ai_timeoutState() {

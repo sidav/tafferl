@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gdamore/tcell/v2"
-	. "tafferlraylib/parcelcreationtool/parcel"
+	. "tafferl/parcelcreationtool/parcel"
 )
 
 var (

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"tafferlraylib/lib/calculations"
+	"tafferl/lib/calculations"
 )
 
 func (dung *gameMap) recalculateLights() {

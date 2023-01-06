@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
 	"strconv"
-	"tafferlraylib/lib/tcell_console_wrapper"
+	"tafferl/lib/tcell_console_wrapper"
 )
 
 const MapRenderVOffset = 3

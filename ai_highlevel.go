@@ -1,6 +1,6 @@
 package main
 
-import "tafferlraylib/parcelcreationtool/parcel"
+import "tafferl/parcelcreationtool/parcel"
 
 type aiState uint8
 

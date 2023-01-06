@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"github.com/gdamore/tcell/v2"
 	"strings"
-	"tafferlraylib/lib/game_log"
-	"tafferlraylib/lib/tcell_console_wrapper"
+	"tafferl/lib/game_log"
+	"tafferl/lib/tcell_console_wrapper"
 )
 
 var cw tcell_console_wrapper.ConsoleWrapper

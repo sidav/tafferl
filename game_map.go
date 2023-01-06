@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"tafferlraylib/lib/calculations/graphic_primitives"
+	"tafferl/lib/calculations/graphic_primitives"
 )
 
 type gameMap struct {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	. "tafferlraylib/parcelcreationtool/parcel"
+	. "tafferl/parcelcreationtool/parcel"
 )
 
 type cursor struct {

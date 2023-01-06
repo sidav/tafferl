@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	log2 "tafferlraylib/lib/game_log"
-	"tafferlraylib/lib/random"
-	"tafferlraylib/lib/random/pcgrandom"
+	log2 "tafferl/lib/game_log"
+	"tafferl/lib/random"
+	"tafferl/lib/random/pcgrandom"
 )
 
 var (
