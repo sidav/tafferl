@@ -134,10 +134,20 @@ func (rs *rendererStruct) drawPawn(p *pawn) {
 	isInLight := rs.gm.tiles[x][y].lightLevel > 0
 	switch p.code {
 	case PAWN_PLAYER:
+		furnUnderPlayer := CURRENT_MAP.getFurnitureAt(CURRENT_MAP.player.x, CURRENT_MAP.player.y)
+		inverse := furnUnderPlayer != nil && furnUnderPlayer.getStaticData().canBeUsedAsCover
 		if isInLight {
-			cw.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
+			if inverse {
+				cw.SetStyle(tcell.ColorBlack, tcell.ColorWhite)
+			} else {
+				cw.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
+			}
 		} else {
-			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
+			if inverse {
+				cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
+			} else {
+				cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
+			}
 		}
 		cw.PutChar('@', sx, sy)
 	case PAWN_GUARD:

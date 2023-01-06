@@ -1,6 +1,8 @@
 package main
 
-import "github.com/sidav/golibrl/geometry"
+import (
+	"tafferlraylib/lib/calculations"
+)
 
 func (p *pawn) ai_timeoutState() {
 	if p.ai.currentStateTimeoutTurn < CURRENT_TURN {
@@ -58,7 +60,7 @@ func (p *pawn) ai_canSeePlayer() bool {
 	if CURRENT_MAP.currentPlayerVisibilityMap[x][y] {
 		usedSightRange := p.getStaticData().sightRangeCalm
 		if p.ai_isCalm() {
-			return CURRENT_MAP.player.isNotConcealed() && geometry.AreCoordsInRange(px, py, x, y, usedSightRange)
+			return CURRENT_MAP.player.isNotConcealed() && calculations.GetApproxDistFromTo(px, py, x, y) <= usedSightRange
 		} else {
 			if CURRENT_MAP.player.isNotConcealed() {
 				usedSightRange = p.getStaticData().sightRangeAlerted
@@ -66,7 +68,7 @@ func (p *pawn) ai_canSeePlayer() bool {
 				usedSightRange = p.getStaticData().sightRangeAlertedDark
 			}
 		}
-		return geometry.AreCoordsInRange(px, py, x, y, usedSightRange)
+		return calculations.GetApproxDistFromTo(px, py, x, y) <= usedSightRange
 	}
 	return false
 }

@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/sidav/golibrl/random/additive_random"
 	log2 "tafferlraylib/lib/game_log"
+	"tafferlraylib/lib/random"
+	"tafferlraylib/lib/random/pcgrandom"
 )
 
 var (
@@ -14,7 +15,7 @@ var (
 	GAME_IS_RUNNING        bool
 	CURRENT_MISSION_WON    bool
 	log                    log2.GameLog
-	rnd                    additive_random.FibRandom
+	rnd                    random.PRNG
 	renderer               rendererStruct
 	currPlayerController   playerController
 	currMission            *Mission
@@ -39,8 +40,7 @@ func areCoordinatesInRangeFrom(fx, fy, tx, ty, srange int) bool {
 func (g *game) runGame() {
 	log = log2.GameLog{}
 	log.Init(5)
-	rnd = additive_random.FibRandom{}
-	rnd.InitDefault()
+	rnd = pcgrandom.New(-1)
 	renderer.initDefaults()
 
 	GAME_IS_RUNNING = true

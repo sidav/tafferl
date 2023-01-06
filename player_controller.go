@@ -8,6 +8,9 @@ func (p *playerController) playerControl(gm *gameMap) {
 	if key == "ESCAPE" {
 		GAME_IS_RUNNING = false
 	}
+	if key == "s" {
+		gm.player.spendTurnsForAction(10)
+	}
 	vx, vy := p.keyToDirection(key)
 	if vx != 0 || vy != 0 {
 		gm.defaultMovementActionByVector(gm.player, true, vx, vy)

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/sidav/golibrl/graphic_primitives"
+	"tafferlraylib/lib/calculations/graphic_primitives"
 )
 
 type gameMap struct {

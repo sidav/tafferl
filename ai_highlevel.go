@@ -126,7 +126,7 @@ func (p *pawn) ai_actRoam() {
 		if CURRENT_MAP.isTilePassableAndNotOccupied(p.x+ai.dirx, p.y+ai.diry) && rnd.Rand(25) > 0 {
 			break
 		} else {
-			ai.dirx, ai.diry = rnd.RandomUnitVectorInt()
+			ai.dirx, ai.diry = rnd.RandomUnitVectorInt(true)
 		}
 		tries++
 	}

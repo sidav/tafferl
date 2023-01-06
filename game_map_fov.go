@@ -1,6 +1,6 @@
 package main
 
-import "github.com/sidav/golibrl/fov/permissive_fov"
+import "tafferlraylib/lib/fov/permissive_fov"
 
 func (g *gameMap) getFieldOfVisionFor(p *pawn) *[][]bool {
 	x, y := p.getCoords()

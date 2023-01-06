@@ -55,8 +55,8 @@ func (l *GameLog) AppendMessage(msg string) {
 	l.logWasChanged = true
 }
 
-func (l *GameLog) AppendMessagef(msg string, zomg interface{}) {
-	msg = fmt.Sprintf(msg, zomg)
+func (l *GameLog) AppendMessagef(msg string, args ...interface{}) {
+	msg = fmt.Sprintf(msg, args...)
 	l.AppendMessage(msg)
 }
 
@@ -65,8 +65,8 @@ func (l *GameLog) Warning(msg string) {
 	l.Last_msgs[len(l.Last_msgs)-1].Type = MSG_WARNING
 }
 
-func (l *GameLog) Warningf(msg string, zomg interface{}) {
-	l.AppendMessagef(msg, zomg)
+func (l *GameLog) Warningf(msg string, args ...interface{}) {
+	l.AppendMessagef(msg, args...)
 	l.Last_msgs[len(l.Last_msgs)-1].Type = MSG_WARNING
 }
 

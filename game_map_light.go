@@ -1,6 +1,8 @@
 package main
 
-import "github.com/sidav/golibrl/geometry"
+import (
+	"tafferlraylib/lib/calculations"
+)
 
 func (dung *gameMap) recalculateLights() {
 	w, h := dung.getSize()
@@ -13,10 +15,10 @@ func (dung *gameMap) recalculateLights() {
 	for _, fur := range dung.furnitures {
 		ls := fur.getCurrentLightLevel()
 		if ls > 0 {
-			for x := fur.x - ls; x <= fur.x + ls; x++ {
-				for y := fur.y - ls; y <= fur.y + ls; y++ {
-					if areCoordinatesValid(x ,y) {
-						if geometry.AreCoordsInRange(fur.x, fur.y, x, y, ls) && dung.visibleLineExists(fur.x, fur.y, x, y, true){
+			for x := fur.x - ls; x <= fur.x+ls; x++ {
+				for y := fur.y - ls; y <= fur.y+ls; y++ {
+					if areCoordinatesValid(x, y) {
+						if calculations.AreCoordsInRange(fur.x, fur.y, x, y, ls) && dung.visibleLineExists(fur.x, fur.y, x, y, true) {
 							dung.tiles[x][y].lightLevel = 1 // WIP. Maybe different light intensity?
 						}
 					}
