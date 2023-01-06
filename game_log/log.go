@@ -2,14 +2,20 @@ package game_log
 
 import (
 	"fmt"
-	cw "github.com/sidav/golibrl/console"
 	"strings"
+)
+
+type MessageType uint8
+
+const (
+	MSG_REGULAR = iota
+	MSG_WARNING
 )
 
 type logMessage struct {
 	Message string
 	Count   int
-	color   int
+	Type    MessageType
 }
 
 func (m *logMessage) getText() string {
@@ -31,7 +37,7 @@ func (l *GameLog) Init(length int) {
 		l.Last_msgs[i] = &logMessage{
 			Message: "",
 			Count:   1,
-			color:   0,
+			Type:    MSG_REGULAR,
 		}
 	}
 }
@@ -56,12 +62,12 @@ func (l *GameLog) AppendMessagef(msg string, zomg interface{}) {
 
 func (l *GameLog) Warning(msg string) {
 	l.AppendMessage(msg)
-	l.Last_msgs[len(l.Last_msgs)-1].color = cw.YELLOW
+	l.Last_msgs[len(l.Last_msgs)-1].Type = MSG_WARNING
 }
 
 func (l *GameLog) Warningf(msg string, zomg interface{}) {
 	l.AppendMessagef(msg, zomg)
-	l.Last_msgs[len(l.Last_msgs)-1].color = cw.YELLOW
+	l.Last_msgs[len(l.Last_msgs)-1].Type = MSG_WARNING
 }
 
 func (l *GameLog) WasChanged() bool {
@@ -75,20 +81,4 @@ func capitalize(s string) string {
 		return strings.ToUpper(string(s[0])) + s[1:]
 	}
 	return s
-}
-
-func (l *GameLog) Render(y int) {
-	width, _ := cw.GetConsoleSize()
-	for i, msg := range l.Last_msgs {
-		if msg.color != 0 {
-			cw.SetFgColor(msg.color)
-		} else {
-			cw.SetFgColor(cw.WHITE)
-		}
-		message := msg.Message
-		if msg.Count > 1 {
-			message += fmt.Sprintf("(x%d)", msg.Count)
-		}
-		cw.PutString(message+strings.Repeat(" ", width-len(message)), 0, y+i)
-	}
 }

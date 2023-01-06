@@ -2,7 +2,12 @@
 
 package main
 
-import "github.com/gdamore/tcell/v2"
+import (
+	"fmt"
+	"github.com/gdamore/tcell/v2"
+	"strings"
+	"tafferlraylib/game_log"
+)
 
 var cw consoleWrapper
 
@@ -50,6 +55,7 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, flush bool) {
 		rs.drawPawn(p)
 	}
 
+	rs.renderLog()
 	cw.flushScreen()
 }
 
@@ -204,4 +210,23 @@ func (rs *rendererStruct) globalToOnScreen(gx, gy int) (int, int) {
 
 func (rs *rendererStruct) onScreenToGlobal(sx, sy int) (int, int) {
 	return rs.camX + sx, rs.camY + sy
+}
+
+func (rs *rendererStruct) renderLog() {
+	_, y := cw.getConsoleSize()
+	y -= len(log.Last_msgs)
+	width, _ := cw.getConsoleSize()
+	for i, msg := range log.Last_msgs {
+		switch msg.Type {
+		case game_log.MSG_REGULAR:
+			cw.setStyle(tcell.ColorWhite, tcell.ColorBlack)
+		case game_log.MSG_WARNING:
+			cw.setStyle(tcell.ColorWhite, tcell.ColorBlack)
+		}
+		message := msg.Message
+		if msg.Count > 1 {
+			message += fmt.Sprintf("(x%d)", msg.Count)
+		}
+		cw.putString(message+strings.Repeat(" ", width-len(message)), 0, y+i)
+	}
 }
