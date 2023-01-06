@@ -22,6 +22,10 @@ func (dung *gameMap) getSize() (int, int) {
 	return len(dung.tiles), len(dung.tiles[0])
 }
 
+func (dung *gameMap) canPawnHearNoise(p *pawn, n *noise) bool {
+	return areCoordinatesInRangeFrom(p.x, p.y, n.x, n.y, n.intensity)
+}
+
 func (dung *gameMap) updateVisibility() {
 	dung.currentPlayerVisibilityMap = *CURRENT_MAP.getFieldOfVisionFor(CURRENT_MAP.player)
 	w, h := dung.getSize()

@@ -25,7 +25,7 @@ func (rs *rendererStruct) initDefaults() {
 func (rs *rendererStruct) updateSizes() {
 	cwid, chei := cw.GetConsoleSize()
 	rs.viewportW = 2 * cwid / 3
-	rs.viewportH = 3 * chei / 4
+	rs.viewportH = chei - len(log.Last_msgs)
 	rs.camX, rs.camY = rs.gm.player.getCoords()
 
 	rs.camX -= rs.viewportW / 2
@@ -70,7 +70,7 @@ func (rs *rendererStruct) drawTile(tile *tileStruct, onScreenX, onScreenY int, i
 	switch tile.code {
 	case TILE_FLOOR:
 		if isInLight {
-			cw.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorYellow, tcell.ColorBlack)
 		} else {
 			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
@@ -133,6 +133,7 @@ func (rs *rendererStruct) drawPawn(p *pawn) {
 	}
 	sx, sy := rs.globalToOnScreen(x, y)
 	isInLight := rs.gm.tiles[x][y].lightLevel > 0
+	char := '?'
 	switch p.code {
 	case PAWN_PLAYER:
 		furnUnderPlayer := CURRENT_MAP.getFurnitureAt(CURRENT_MAP.player.x, CURRENT_MAP.player.y)
@@ -150,22 +151,31 @@ func (rs *rendererStruct) drawPawn(p *pawn) {
 				cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 			}
 		}
-		cw.PutChar('@', sx, sy)
+		char = '@'
 	case PAWN_GUARD:
 		if isInLight {
 			cw.SetStyle(tcell.ColorRed, tcell.ColorBlack)
 		} else {
 			cw.SetStyle(tcell.ColorDarkRed, tcell.ColorBlack)
 		}
-		cw.PutChar('G', sx, sy)
+		char = 'G'
 	case PAWN_ARCHER:
 		if isInLight {
 			cw.SetStyle(tcell.ColorRed, tcell.ColorBlack)
 		} else {
 			cw.SetStyle(tcell.ColorDarkRed, tcell.ColorBlack)
 		}
-		cw.PutChar('A', sx, sy)
+		char = 'A'
 	}
+	if p.ai != nil {
+		switch p.ai.currentState {
+		case AI_SEARCHING:
+			char = '?'
+		case AI_ALERTED:
+			char = '!'
+		}
+	}
+	cw.PutChar(char, sx, sy)
 }
 
 func (rs *rendererStruct) drawFurniture(f *furniture) {
@@ -211,7 +221,7 @@ func (rs *rendererStruct) renderNoisesForPlayer() {
 	for _, n := range CURRENT_MAP.noises {
 		if !CURRENT_MAP.currentPlayerVisibilityMap[n.x][n.y] || !n.showOnlyNotSeen {
 			// render only those noises in player's vicinity
-			if areCoordinatesInRangeFrom(n.x, n.y, CURRENT_MAP.player.x, CURRENT_MAP.player.y, n.intensity) {
+			if rs.gm.canPawnHearNoise(rs.gm.player, n) {
 				if n.textBubble != "" {
 					x, y := rs.globalToOnScreen(n.x, n.y)
 					if n.creator != nil {

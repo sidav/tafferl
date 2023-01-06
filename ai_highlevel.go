@@ -94,7 +94,7 @@ func (p *pawn) ai_checkNoises() {
 		if n.creator == p {
 			continue
 		}
-		if areCoordinatesInRangeFrom(p.x, p.y, n.x, n.y, n.intensity) {
+		if CURRENT_MAP.canPawnHearNoise(p, n) {
 			if n.suspicious && p.ai_isCalm() {
 				p.ai.currentState = AI_SEARCHING
 				p.ai.setStateTimeout(250)

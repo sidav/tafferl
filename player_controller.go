@@ -5,11 +5,13 @@ type playerController struct {
 
 func (p *playerController) playerControl(gm *gameMap) {
 	key := cw.ReadKey()
-	if key == "ESCAPE" {
+	switch key {
+	case "ESCAPE":
 		GAME_IS_RUNNING = false
-	}
-	if key == "s" {
+	case "s":
 		gm.player.spendTurnsForAction(10)
+	case "r":
+		gm.player.isRunning = !gm.player.isRunning
 	}
 	vx, vy := p.keyToDirection(key)
 	if vx != 0 || vy != 0 {
