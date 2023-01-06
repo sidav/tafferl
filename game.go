@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"tafferl/lib/calculations"
 	log2 "tafferl/lib/game_log"
 	"tafferl/lib/random"
 	"tafferl/lib/random/pcgrandom"
@@ -34,7 +35,7 @@ func areCoordinatesValid(x, y int) bool {
 }
 
 func areCoordinatesInRangeFrom(fx, fy, tx, ty, srange int) bool {
-	return (tx-fx)*(tx-fx)+(ty-fy)*(ty-fy) < srange*srange
+	return calculations.GetApproxDistFromTo(fx, fy, tx, ty) <= srange
 }
 
 func (g *game) runGame() {

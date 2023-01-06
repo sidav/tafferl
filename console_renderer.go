@@ -50,6 +50,7 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, flush bool) {
 	for _, f := range gm.furnitures {
 		rs.drawFurniture(f)
 	}
+	rs.renderNoisesForPlayer()
 
 	rs.drawPawn(gm.player)
 	for _, p := range gm.pawns {
@@ -206,6 +207,41 @@ func (rs *rendererStruct) drawFurniture(f *furniture) {
 	}
 }
 
+func (rs *rendererStruct) renderNoisesForPlayer() {
+	for _, n := range CURRENT_MAP.noises {
+		if !CURRENT_MAP.currentPlayerVisibilityMap[n.x][n.y] || !n.showOnlyNotSeen {
+			// render only those noises in player's vicinity
+			if areCoordinatesInRangeFrom(n.x, n.y, CURRENT_MAP.player.x, CURRENT_MAP.player.y, n.intensity) {
+				if n.textBubble != "" {
+					x, y := rs.globalToOnScreen(n.x, n.y)
+					if n.creator != nil {
+						x, y = rs.globalToOnScreen(n.creator.getCoords())
+					}
+					if x == -1 && y == -1 {
+						continue
+					}
+					x -= len(n.textBubble) / 2
+					if n.suspicious {
+						if n.creator != nil {
+							cw.SetStyle(tcell.ColorRed, tcell.ColorDarkGray)
+						} else {
+							cw.SetStyle(tcell.ColorYellow, tcell.ColorDarkGray)
+						}
+					} else {
+						cw.SetStyle(tcell.ColorBeige, tcell.ColorDarkGray)
+					}
+					cw.PutString(n.textBubble, x, y+1)
+					cw.ResetStyle()
+				} else {
+					cw.SetStyle(tcell.ColorBeige, tcell.ColorBlack)
+					x, y := rs.globalToOnScreen(n.x, n.y)
+					cw.PutChar('*', x, y)
+				}
+			}
+		}
+	}
+}
+
 func (rs *rendererStruct) putTextInRect(text string, x, y, w int) {
 	cw.PutTextInRect(text, x, y, w)
 }
@@ -232,12 +268,16 @@ func (rs *rendererStruct) renderLog() {
 		case game_log.MSG_REGULAR:
 			cw.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
 		case game_log.MSG_WARNING:
-			cw.SetStyle(tcell.ColorWhite, tcell.ColorBlack)
+			cw.SetStyle(tcell.ColorYellow, tcell.ColorBlack)
 		}
 		message := msg.Message
 		if msg.Count > 1 {
 			message += fmt.Sprintf("(x%d)", msg.Count)
 		}
-		cw.PutString(message+strings.Repeat(" ", width-len(message)), 0, y+i)
+		if width-len(message) > 0 {
+			cw.PutString(message+strings.Repeat(" ", width-len(message)), 0, y+i)
+		} else { // for too narrow console size
+			cw.PutString(message, 0, y+i)
+		}
 	}
 }
