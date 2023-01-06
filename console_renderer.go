@@ -47,6 +47,8 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, flush bool) {
 		}
 	}
 
+	rs.renderUiOutline()
+
 	for _, f := range gm.furnitures {
 		rs.drawFurniture(f)
 	}
@@ -59,6 +61,24 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, flush bool) {
 
 	rs.renderLog()
 	cw.FlushScreen()
+}
+
+func (rs *rendererStruct) renderUiOutline() {
+	w, _ := cw.GetConsoleSize()
+	cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
+	if CURRENT_MAP.player.isNotConcealed() {
+		cw.SetStyle(tcell.ColorBlack, tcell.ColorYellow)
+	}
+	if CURRENT_MAP.player.isRunning {
+		cw.SetStyle(tcell.ColorBlack, tcell.ColorRed)
+	}
+	for x := 0; x < w; x++ {
+		// cw.PutChar(' ', x, 0)
+		cw.PutChar(' ', x, rs.viewportH-1)
+	}
+	for y := 0; y < rs.viewportW; y++ {
+		cw.PutChar(' ', rs.viewportW, y)
+	}
 }
 
 func (rs *rendererStruct) drawTile(tile *tileStruct, onScreenX, onScreenY int, isSeenNow bool) {
