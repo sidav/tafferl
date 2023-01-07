@@ -121,6 +121,8 @@ func (rs *rendererStruct) renderUi() {
 		rs.gm.player.hp, rs.gm.player.getStaticData().maxhp, rs.gm.player.inv.gold)
 	cw.PutString(libstrings.CenterStringWithSpaces(hpString, uiW), uiX, currLine)
 	currLine++
+	cw.PutString(libstrings.CenterStringWithSpaces(fmt.Sprintf("Water %d", rs.gm.player.inv.water), uiW), uiX, currLine)
+	currLine++
 	currLine++
 	itemString := "No item selected (g)"
 	if rs.pc.currSelectedItemIndex >= 0 {

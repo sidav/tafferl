@@ -11,6 +11,10 @@ func (f *furniture) canBeLooted() bool {
 	return f.inv != nil
 }
 
+func (f *furniture) canBeExtinguished() bool {
+	return f.getStaticData().isExtinguishable
+}
+
 func (f *furniture) getCurrentLightLevel() int {
 	if f.isLit {
 		return f.getStaticData().lightStrength

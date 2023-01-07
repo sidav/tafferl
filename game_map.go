@@ -184,34 +184,48 @@ func (dung *gameMap) defaultMovementActionByVector(p *pawn, mayOpenDoor bool, vx
 	}
 	furn := dung.getFurnitureAt(x, y)
 	if furn != nil {
-		if furn.getStaticData().canBeUsedAsCover && p == dung.player {
-			p.x = x
-			p.y = y
-			dung.createNoise(p.createMovementNoise())
-			p.spendTurnsForAction(p.getStaticData().timeForWalking)
-			return true
-		}
-		// steal from furniture (if the pawn is player)
-		if furn.canBeLooted() && p == dung.player {
-			stealString := fmt.Sprintf("Stole %d gold", furn.inv.gold)
-			for _, arrow := range furn.inv.arrows {
-				if arrow.amount == 1 {
-					stealString += ", " + arrow.name
-				} else if arrow.amount > 1 {
-					stealString += fmt.Sprintf(", x%d %s", arrow.amount, arrow.name)
+		if p == dung.player {
+			if furn.getStaticData().canBeUsedAsCover {
+				p.x = x
+				p.y = y
+				dung.createNoise(p.createMovementNoise())
+				p.spendTurnsForAction(p.getStaticData().timeForWalking)
+				return true
+			}
+			if furn.canBeExtinguished() && p.inv.water > 0 {
+				dung.createNoise(&noise{
+					x:          x,
+					y:          y,
+					intensity:  7,
+					textBubble: "*PSSSSH*",
+					suspicious: true,
+				})
+				p.inv.water--
+				furn.isLit = false
+				p.spendTurnsForAction(p.getStaticData().timeForWalking)
+			}
+			// steal from furniture (if the pawn is player)
+			if furn.canBeLooted() {
+				stealString := fmt.Sprintf("Stole %d gold", furn.inv.gold)
+				for _, arrow := range furn.inv.arrows {
+					if arrow.amount == 1 {
+						stealString += ", " + arrow.name
+					} else if arrow.amount > 1 {
+						stealString += fmt.Sprintf(", x%d %s", arrow.amount, arrow.name)
+					}
 				}
-			}
-			for _, str := range furn.inv.targetItems {
-				stealString += fmt.Sprintf(", %s", str)
-			}
-			stealString += "."
+				for _, str := range furn.inv.targetItems {
+					stealString += fmt.Sprintf(", %s", str)
+				}
+				stealString += "."
 
-			p.inv.grabEverythingFromInventory(furn.inv)
-			furn.inv = nil
-			log.AppendMessage(stealString)
-			// create noise?
-			p.spendTurnsForAction(20)
-			return true
+				p.inv.grabEverythingFromInventory(furn.inv)
+				furn.inv = nil
+				log.AppendMessage(stealString)
+				// create noise?
+				p.spendTurnsForAction(20)
+				return true
+			}
 		}
 	}
 	if dung.isTileADoor(x, y) && mayOpenDoor {

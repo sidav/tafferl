@@ -2,6 +2,7 @@ package main
 
 type inventory struct {
 	gold        int
+	water       int
 	arrows      []arrow
 	targetItems []string
 }
@@ -13,6 +14,7 @@ type arrow struct {
 
 func (i *inventory) init() {
 	i.gold = 0
+	i.water = 5
 	i.arrows = []arrow{
 		{name: "Water arrow", amount: 0},
 		{name: "Noise arrow", amount: 0},
