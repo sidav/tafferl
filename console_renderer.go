@@ -7,7 +7,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"strings"
 	"tafferl/lib/game_log"
-	strings2 "tafferl/lib/strings"
+	libstrings "tafferl/lib/strings"
 	"tafferl/lib/tcell_console_wrapper"
 	"time"
 )
@@ -18,6 +18,7 @@ const frameskip = 50
 
 type rendererStruct struct {
 	gm                   *gameMap
+	pc                   *playerController
 	camX, camY           int
 	viewportW, viewportH int
 	currentFrame         int
@@ -43,6 +44,7 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, pc *playerController) {
 		rs.currentFrame++
 		return
 	}
+	rs.pc = pc
 	rs.gm = gm
 	rs.updateSizes()
 	cw.ClearScreen()
@@ -68,15 +70,15 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, pc *playerController) {
 	for _, p := range gm.pawns {
 		rs.drawPawn(p)
 	}
-
-	log.Warningf("Rendered %d frame", rs.currentFrame)
 	rs.renderLog()
 	cw.FlushScreen()
 	rs.currentFrame++
 }
 
 func (rs *rendererStruct) renderUi() {
-	w, _ := cw.GetConsoleSize()
+	currLine := 0
+	w, h := cw.GetConsoleSize()
+	techInfoLine := h - len(log.Last_msgs)
 	uiX := rs.viewportW
 	uiW := w - uiX
 	cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
@@ -89,7 +91,8 @@ func (rs *rendererStruct) renderUi() {
 		cw.SetStyle(tcell.ColorBlack, tcell.ColorYellow)
 		lightStatusStr = "! Exposed !"
 	}
-	cw.PutString(strings2.CenterStringWithSpaces(lightStatusStr, uiW), uiX, 0)
+	cw.PutString(libstrings.CenterStringWithSpaces(lightStatusStr, uiW), uiX, currLine)
+	currLine++
 
 	cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
 	movementStatusStr := "Walking slowly"
@@ -97,12 +100,28 @@ func (rs *rendererStruct) renderUi() {
 		cw.SetStyle(tcell.ColorBlack, tcell.ColorRed)
 		movementStatusStr = "!!! Running !!!"
 	}
-	cw.PutString(strings2.CenterStringWithSpaces("(R): "+movementStatusStr, uiW), uiX, 1)
+	cw.PutString(libstrings.CenterStringWithSpaces("(R): "+movementStatusStr, uiW), uiX, currLine)
+	currLine++
+
 	cw.SetStyle(tcell.ColorDarkGray, tcell.ColorBlack)
 	hpString := fmt.Sprintf("HLTH %d/%d  GLD $%d",
 		rs.gm.player.hp, rs.gm.player.getStaticData().maxhp, rs.gm.player.inv.gold)
-	cw.PutString(strings2.CenterStringWithSpaces(hpString, uiW), uiX, 2)
+	cw.PutString(libstrings.CenterStringWithSpaces(hpString, uiW), uiX, currLine)
+	currLine++
+	currLine++
+	itemString := "No item selected (g)"
+	if rs.pc.currSelectedItemIndex >= 0 {
+		itemString = fmt.Sprintf("Item (g): x%d %s",
+			rs.gm.player.inv.arrows[rs.pc.currSelectedItemIndex].amount,
+			rs.gm.player.inv.arrows[rs.pc.currSelectedItemIndex].name)
+	}
+	cw.PutString(libstrings.CenterStringWithSpaces(itemString, uiW), uiX, currLine)
 
+	// tech info
+	cw.PutString(libstrings.CenterStringWithSpaces(fmt.Sprintf("Render call %d", rs.currentFrame), uiW), uiX, techInfoLine-1)
+	cw.PutString(libstrings.CenterStringWithSpaces(fmt.Sprintf("PC mode %d", rs.pc.mode), uiW), uiX, techInfoLine-2)
+
+	// UI outline
 	//cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
 	//for x := 0; x < w; x++ {
 	//	// cw.PutChar(' ', x, 0)
