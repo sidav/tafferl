@@ -3,6 +3,7 @@ package tcell_console_wrapper
 import (
 	"github.com/gdamore/tcell/v2"
 	"strings"
+	"time"
 )
 
 type ConsoleWrapper struct {
@@ -90,6 +91,23 @@ func (c *ConsoleWrapper) ReadKey() string {
 			return eventToKeyString(ev)
 		}
 	}
+}
+
+func (c *ConsoleWrapper) ReadKeyAsync(maxMsSinceKeyPress int) string { // returns an empty string if no key was pressed
+	for c.screen.HasPendingEvent() {
+		ev := c.screen.PollEvent()
+		// consider only recent key presses
+		if time.Since(ev.When()) < time.Duration(maxMsSinceKeyPress)*time.Millisecond {
+			switch ev := ev.(type) {
+			case *tcell.EventKey:
+				if ev.Key() == tcell.KeyCtrlC {
+					return "EXIT"
+				}
+				return eventToKeyString(ev)
+			}
+		}
+	}
+	return ""
 }
 
 func eventToKeyString(ev *tcell.EventKey) string {

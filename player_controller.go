@@ -1,21 +1,26 @@
 package main
 
 type playerController struct {
+	redrawNeeded bool
 }
 
 func (p *playerController) playerControl(gm *gameMap) {
-	key := cw.ReadKey()
+	p.redrawNeeded = false
+	key := readKeyAsync()
 	switch key {
 	case "ESCAPE":
 		GAME_IS_RUNNING = false
 	case "s":
 		gm.player.spendTurnsForAction(10)
+		p.redrawNeeded = true
 	case "r":
 		gm.player.isRunning = !gm.player.isRunning
+		p.redrawNeeded = true
 	}
 	vx, vy := p.keyToDirection(key)
 	if vx != 0 || vy != 0 {
 		gm.defaultMovementActionByVector(gm.player, true, vx, vy)
+		p.redrawNeeded = true
 	}
 }
 

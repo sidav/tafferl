@@ -65,7 +65,7 @@ func (g *game) mainLoop() {
 	CURRENT_MAP.updateVisibility()
 
 	for GAME_IS_RUNNING && !CURRENT_MISSION_WON && CURRENT_MAP.player.isTimeToAct() {
-		renderer.renderGameScreen(&CURRENT_MAP, true)
+		renderer.renderGameScreen(&CURRENT_MAP, &currPlayerController)
 		currPlayerController.playerControl(&CURRENT_MAP)
 	}
 
@@ -93,7 +93,7 @@ func gameover() {
 	cw.PutString("You are dead! Press ENTER to exit.", 0, 0)
 	cw.FlushScreen()
 	GAME_IS_RUNNING = false
-	for cw.ReadKey() != "ENTER" {
+	for readKey() != "ENTER" {
 
 	}
 }
@@ -102,7 +102,7 @@ func gamewon() {
 	cw.ClearScreen()
 	cw.PutString(currMission.DebriefingText, 0, 0)
 	cw.FlushScreen()
-	for cw.ReadKey() != "ENTER" {
+	for readKey() != "ENTER" {
 
 	}
 	CURRENT_MISSION_WON = true

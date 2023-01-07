@@ -66,7 +66,7 @@ func (l *GameLog) Warning(msg string) {
 }
 
 func (l *GameLog) Warningf(msg string, args ...interface{}) {
-	l.AppendMessagef(msg, args...)
+	l.AppendMessage(fmt.Sprintf(msg, args...))
 	l.Last_msgs[len(l.Last_msgs)-1].Type = MSG_WARNING
 }
 

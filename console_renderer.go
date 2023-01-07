@@ -9,14 +9,18 @@ import (
 	"tafferl/lib/game_log"
 	strings2 "tafferl/lib/strings"
 	"tafferl/lib/tcell_console_wrapper"
+	"time"
 )
 
 var cw tcell_console_wrapper.ConsoleWrapper
+
+const frameskip = 50
 
 type rendererStruct struct {
 	gm                   *gameMap
 	camX, camY           int
 	viewportW, viewportH int
+	currentFrame         int
 }
 
 func (rs *rendererStruct) initDefaults() {
@@ -33,7 +37,12 @@ func (rs *rendererStruct) updateSizes() {
 	rs.camY -= rs.viewportH / 2
 }
 
-func (rs *rendererStruct) renderGameScreen(gm *gameMap, flush bool) {
+func (rs *rendererStruct) renderGameScreen(gm *gameMap, pc *playerController) {
+	if !(rs.currentFrame%frameskip == 0 || pc.redrawNeeded) {
+		time.Sleep(time.Duration(200/frameskip) * time.Millisecond)
+		rs.currentFrame++
+		return
+	}
 	rs.gm = gm
 	rs.updateSizes()
 	cw.ClearScreen()
@@ -60,8 +69,10 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, flush bool) {
 		rs.drawPawn(p)
 	}
 
+	log.Warningf("Rendered %d frame", rs.currentFrame)
 	rs.renderLog()
 	cw.FlushScreen()
+	rs.currentFrame++
 }
 
 func (rs *rendererStruct) renderUi() {
@@ -208,7 +219,7 @@ func (rs *rendererStruct) drawPawn(p *pawn) {
 		}
 		char = 'A'
 	}
-	if p.ai != nil {
+	if p.ai != nil && (rs.currentFrame/frameskip)%2 == 0 {
 		switch p.ai.currentState {
 		case AI_SEARCHING:
 			char = '?'
