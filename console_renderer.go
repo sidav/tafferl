@@ -15,9 +15,10 @@ import (
 var cw tcell_console_wrapper.ConsoleWrapper
 
 const (
-	frameskip              = 50
-	render_pawn_state_each = 200
-	render_noises_each     = 200
+	frameskip             = 50
+	blink_pawn_state_each = 200
+	blink_noises_each     = 200
+	blink_crosshair_each  = 100
 )
 
 type rendererStruct struct {
@@ -40,7 +41,7 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, pc *playerController) {
 	}
 	rs.pc = pc
 	rs.gm = gm
-	rs.updateSizes()
+	rs.update()
 	cw.ClearScreen()
 	mw, mh := gm.getSize()
 	// TODO: optimize: iterate through viewport, not through all tiles
@@ -60,20 +61,28 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, pc *playerController) {
 	}
 	rs.renderNoisesForPlayer()
 
+	rs.drawBodies()
+
 	rs.drawPawn(gm.player)
 	for _, p := range gm.pawns {
 		rs.drawPawn(p)
+	}
+	if rs.pc.mode == PCMODE_SHOOT_TARGET {
+		rs.drawCrosschair()
 	}
 	rs.renderLog()
 	cw.FlushScreen()
 	rs.currentFrame++
 }
 
-func (rs *rendererStruct) updateSizes() {
+func (rs *rendererStruct) update() {
 	cwid, chei := cw.GetConsoleSize()
 	rs.viewportW = 2 * cwid / 3
 	rs.viewportH = chei - len(log.Last_msgs)
 	rs.camX, rs.camY = rs.gm.player.getCoords()
+	if rs.pc.mode == PCMODE_SHOOT_TARGET {
+		rs.camX, rs.camY = rs.pc.crosschairX, rs.pc.crosschairY
+	}
 
 	rs.camX -= rs.viewportW / 2
 	rs.camY -= rs.viewportH / 2
@@ -243,7 +252,7 @@ func (rs *rendererStruct) drawPawn(p *pawn) {
 		}
 		char = 'A'
 	}
-	if p.ai != nil && (rs.currentFrame/render_pawn_state_each)%2 == 0 {
+	if p.ai != nil && rs.shouldShowBlinking(blink_pawn_state_each) {
 		switch p.ai.currentState {
 		case AI_SEARCHING:
 			char = '?'
@@ -252,6 +261,37 @@ func (rs *rendererStruct) drawPawn(p *pawn) {
 		}
 	}
 	cw.PutChar(char, sx, sy)
+}
+
+func (rs *rendererStruct) drawBodies() {
+	cw.SetStyle(tcell.ColorRed, tcell.ColorBlack)
+	for _, b := range rs.gm.bodies {
+		bgx, bgy := b.pawnOwner.getCoords()
+		if rs.gm.currentPlayerVisibilityMap[bgx][bgy] && rs.areCoordsInViewport(bgx, bgy) {
+			bx, by := rs.globalToOnScreen(bgx, bgy)
+			cw.PutChar('%', bx, by)
+		}
+	}
+}
+
+func (rs *rendererStruct) drawCrosschair() {
+	cw.SetStyle(tcell.ColorRed, tcell.ColorBlack)
+	chx, chy := rs.globalToOnScreen(rs.camX, rs.camY)
+	chx += rs.viewportW / 2
+	chy += rs.viewportH / 2
+	if rs.shouldShowBlinking(blink_crosshair_each) {
+		// draw plus-shaped crosschair
+		cw.PutChar('|', chx, chy-1)
+		cw.PutChar('|', chx, chy+1)
+		cw.PutChar('-', chx-1, chy)
+		cw.PutChar('-', chx+1, chy)
+	} else {
+		// draw cross-shaped crosschair
+		cw.PutChar('/', chx+1, chy-1)
+		cw.PutChar('/', chx-1, chy+1)
+		cw.PutChar('\\', chx-1, chy-1)
+		cw.PutChar('\\', chx+1, chy+1)
+	}
 }
 
 func (rs *rendererStruct) drawFurniture(f *furniture) {
@@ -294,7 +334,7 @@ func (rs *rendererStruct) drawFurniture(f *furniture) {
 }
 
 func (rs *rendererStruct) renderNoisesForPlayer() {
-	if (rs.currentFrame/render_noises_each)%2 > 0 {
+	if !rs.shouldShowBlinking(blink_noises_each) {
 		return
 	}
 
@@ -347,6 +387,10 @@ func (rs *rendererStruct) globalToOnScreen(gx, gy int) (int, int) {
 
 func (rs *rendererStruct) onScreenToGlobal(sx, sy int) (int, int) {
 	return rs.camX + sx, rs.camY + sy
+}
+
+func (rs *rendererStruct) shouldShowBlinking(period int) bool {
+	return (rs.currentFrame/period)%2 == 0
 }
 
 func (rs *rendererStruct) renderLog() {

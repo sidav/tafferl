@@ -20,6 +20,7 @@ type playerController struct {
 	currSelectedItemIndex int
 
 	selectedVx, selectedVy     int // door selection, for example...
+	crosschairX, crosschairY   int
 	wasInterruptedForRendering bool
 }
 
@@ -34,6 +35,8 @@ func (p *playerController) playerControl(gm *gameMap) {
 		p.actSelectDirectionMode()
 	case PCMODE_CLOSE_DOOR:
 		p.actCloseDoor()
+	case PCMODE_SHOOT_TARGET:
+		p.actShootTargetMode()
 	}
 }
 
@@ -50,6 +53,10 @@ func (p *playerController) actNormalMode() {
 		p.redrawNeeded = true
 	case "v":
 		p.setMode(PCMODE_CLOSE_DOOR)
+	case "f":
+		log.AppendMessage("I aim.")
+		p.crosschairX, p.crosschairY = p.player.getCoords()
+		p.setMode(PCMODE_SHOOT_TARGET)
 	case "n":
 		p.gm.createNoise(&noise{
 			creator:    p.player,
@@ -107,6 +114,24 @@ func (p *playerController) actCloseDoor() {
 	}
 }
 
+func (p *playerController) actShootTargetMode() {
+	key := readKeyAsync()
+	vx, vy := p.keyToDirection(key)
+	if vx != 0 || vy != 0 {
+		p.redrawNeeded = true
+		p.crosschairX += vx
+		p.crosschairY += vy
+	}
+	if key == "f" {
+		applyArrowEffect(p.player.inv.arrows[p.currSelectedItemIndex].name, p.crosschairX, p.crosschairY)
+		p.player.spendTurnsForAction(10)
+		p.setMode(PCMODE_NORMAL)
+	}
+	if key == "ESCAPE" {
+		p.setMode(PCMODE_NORMAL)
+	}
+}
+
 func (p *playerController) actSelectDirectionMode() {
 	vx, vy := p.keyToDirection(readKeyAsync())
 	if vx != 0 || vy != 0 {
@@ -125,6 +150,7 @@ func (p *playerController) selectNextItem() {
 }
 
 func (p *playerController) setMode(mode pcMode) {
+	p.redrawNeeded = true
 	p.prevoiusMode = p.mode
 	p.mode = mode
 }
