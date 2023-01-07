@@ -14,7 +14,11 @@ import (
 
 var cw tcell_console_wrapper.ConsoleWrapper
 
-const frameskip = 50
+const (
+	frameskip              = 50
+	render_pawn_state_each = 200
+	render_noises_each     = 200
+)
 
 type rendererStruct struct {
 	gm                   *gameMap
@@ -26,16 +30,6 @@ type rendererStruct struct {
 
 func (rs *rendererStruct) initDefaults() {
 
-}
-
-func (rs *rendererStruct) updateSizes() {
-	cwid, chei := cw.GetConsoleSize()
-	rs.viewportW = 2 * cwid / 3
-	rs.viewportH = chei - len(log.Last_msgs)
-	rs.camX, rs.camY = rs.gm.player.getCoords()
-
-	rs.camX -= rs.viewportW / 2
-	rs.camY -= rs.viewportH / 2
 }
 
 func (rs *rendererStruct) renderGameScreen(gm *gameMap, pc *playerController) {
@@ -73,6 +67,16 @@ func (rs *rendererStruct) renderGameScreen(gm *gameMap, pc *playerController) {
 	rs.renderLog()
 	cw.FlushScreen()
 	rs.currentFrame++
+}
+
+func (rs *rendererStruct) updateSizes() {
+	cwid, chei := cw.GetConsoleSize()
+	rs.viewportW = 2 * cwid / 3
+	rs.viewportH = chei - len(log.Last_msgs)
+	rs.camX, rs.camY = rs.gm.player.getCoords()
+
+	rs.camX -= rs.viewportW / 2
+	rs.camY -= rs.viewportH / 2
 }
 
 func (rs *rendererStruct) renderUi() {
@@ -120,6 +124,7 @@ func (rs *rendererStruct) renderUi() {
 	// tech info
 	cw.PutString(libstrings.CenterStringWithSpaces(fmt.Sprintf("Render call %d", rs.currentFrame), uiW), uiX, techInfoLine-1)
 	cw.PutString(libstrings.CenterStringWithSpaces(fmt.Sprintf("PC mode %d", rs.pc.mode), uiW), uiX, techInfoLine-2)
+	cw.PutString(libstrings.CenterStringWithSpaces(fmt.Sprintf("Tick %d", CURRENT_TURN), uiW), uiX, techInfoLine-3)
 
 	// UI outline
 	//cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
@@ -238,7 +243,7 @@ func (rs *rendererStruct) drawPawn(p *pawn) {
 		}
 		char = 'A'
 	}
-	if p.ai != nil && (rs.currentFrame/frameskip)%2 == 0 {
+	if p.ai != nil && (rs.currentFrame/render_pawn_state_each)%2 == 0 {
 		switch p.ai.currentState {
 		case AI_SEARCHING:
 			char = '?'
@@ -289,6 +294,10 @@ func (rs *rendererStruct) drawFurniture(f *furniture) {
 }
 
 func (rs *rendererStruct) renderNoisesForPlayer() {
+	if (rs.currentFrame/render_noises_each)%2 > 0 {
+		return
+	}
+
 	for _, n := range rs.gm.noises {
 		if !rs.gm.currentPlayerVisibilityMap[n.x][n.y] || !n.showOnlyNotSeen {
 			// render only those noises in player's vicinity
@@ -304,12 +313,12 @@ func (rs *rendererStruct) renderNoisesForPlayer() {
 					x -= len(n.textBubble) / 2
 					if n.suspicious {
 						if n.creator != nil {
-							cw.SetStyle(tcell.ColorRed, tcell.ColorDarkGray)
+							cw.SetStyle(tcell.ColorBlack, tcell.ColorRed)
 						} else {
-							cw.SetStyle(tcell.ColorYellow, tcell.ColorDarkGray)
+							cw.SetStyle(tcell.ColorBlack, tcell.ColorYellow)
 						}
 					} else {
-						cw.SetStyle(tcell.ColorBeige, tcell.ColorDarkGray)
+						cw.SetStyle(tcell.ColorBlack, tcell.ColorDarkGray)
 					}
 					cw.PutString(n.textBubble, x, y+1)
 					cw.ResetStyle()

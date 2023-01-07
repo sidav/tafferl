@@ -50,6 +50,16 @@ func (p *playerController) actNormalMode() {
 		p.redrawNeeded = true
 	case "v":
 		p.setMode(PCMODE_CLOSE_DOOR)
+	case "n":
+		p.gm.createNoise(&noise{
+			creator:    p.player,
+			x:          p.player.x,
+			y:          p.player.y,
+			intensity:  10,
+			textBubble: "*Whistle*",
+			suspicious: true,
+		})
+		p.player.spendTurnsForAction(10)
 	case "r":
 		p.gm.player.isRunning = !p.gm.player.isRunning
 		p.redrawNeeded = true
@@ -68,8 +78,10 @@ func (p *playerController) actCloseDoor() {
 		for x := px - 1; x <= px+1; x++ {
 			for y := py - 1; y <= py+1; y++ {
 				if p.gm.isTileADoor(x, y) && p.gm.tiles[x][y].isOpened {
+					log.AppendMessage("I close the door.")
 					p.gm.tiles[x][y].isOpened = false
 					p.gm.player.spendTurnsForAction(10)
+					p.setMode(PCMODE_NORMAL)
 				}
 			}
 		}
@@ -77,18 +89,20 @@ func (p *playerController) actCloseDoor() {
 		if p.wasInterruptedForRendering {
 			p.redrawNeeded = false
 			if p.gm.isTileADoor(px+p.selectedVx, py+p.selectedVy) {
+				log.AppendMessage("I close the door.")
 				p.gm.tiles[px+p.selectedVx][py+p.selectedVy].isOpened = false
 				p.gm.player.spendTurnsForAction(10)
+				p.setMode(PCMODE_NORMAL)
 			} else {
 				p.setMode(PCMODE_SELECT_DIRECTION)
 			}
 		} else {
 			p.wasInterruptedForRendering = true
 			p.redrawNeeded = true
-			log.AppendMessage("Select a door")
+			log.AppendMessage("Which door should I close?")
 		}
 	} else {
-		log.AppendMessage("No door nearby to close")
+		log.AppendMessage("I see no doors nearby to close.")
 		p.setMode(PCMODE_NORMAL)
 	}
 }
