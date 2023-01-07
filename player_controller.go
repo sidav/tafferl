@@ -63,7 +63,7 @@ func (p *playerController) actNormalMode() {
 			x:          p.player.x,
 			y:          p.player.y,
 			intensity:  10,
-			textBubble: "*Whistle*",
+			textBubble: p.gm.player.getStaticData().getRandomResponseTo(SITUATION_MAKING_DISTRACTING_NOISE),
 			suspicious: true,
 		})
 		p.player.spendTurnsForAction(10)

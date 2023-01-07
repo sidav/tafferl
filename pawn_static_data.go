@@ -10,12 +10,13 @@ const (
 )
 
 const (
-	SITUATION_NOISE responseSituation = iota
+	SITUATION_NOISE_HEARD responseSituation = iota
 	SITUATION_IDLE_CHATTER
 	SITUATION_ENEMY_SIGHTED
 	SITUATION_STARTING_PURSUIT
 	SITUATION_ENEMY_DISAPPEARED
 	SITUATION_SEARCH_STOPPED
+	SITUATION_MAKING_DISTRACTING_NOISE
 )
 
 type pawnStaticData struct {
@@ -65,7 +66,7 @@ var pawnStaticTable = map[pawnCode]pawnStaticData{
 				"When will my watch end?..",
 				"Think I have to sharpen my sword.",
 			},
-			SITUATION_NOISE: {
+			SITUATION_NOISE_HEARD: {
 				"What was that?",
 				"Huh?",
 				"Did you hear that?",
@@ -111,7 +112,7 @@ var pawnStaticTable = map[pawnCode]pawnStaticData{
 				"* Yawn *",
 				"* Yawn *", // duplicate intended.
 			},
-			SITUATION_NOISE: {
+			SITUATION_NOISE_HEARD: {
 				"What was that?",
 				"Huh?",
 				"Did you hear that?",
@@ -148,5 +149,16 @@ var pawnStaticTable = map[pawnCode]pawnStaticData{
 		timeForRunning:        6,
 		runningNoiseIntensity: 5,
 		walkingNoiseIntensity: 0,
+		responsesForSituations: map[responseSituation][]string{
+			SITUATION_MAKING_DISTRACTING_NOISE: {
+				"*Whistle*",
+				"*Whistle*",
+				"*Cough*",
+				"*Cough*",
+				"*Click*",
+				"Hey!",
+				"I'm here!",
+			},
+		},
 	},
 }

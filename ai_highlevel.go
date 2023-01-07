@@ -99,7 +99,7 @@ func (p *pawn) ai_checkNoises() {
 				p.ai.currentState = AI_SEARCHING
 				p.ai.setStateTimeout(250)
 				p.ai.searchx, p.ai.searchy = n.x, n.y
-				textbubble := p.getStaticData().getRandomResponseTo(SITUATION_NOISE)
+				textbubble := p.getStaticData().getRandomResponseTo(SITUATION_NOISE_HEARD)
 				p.doTextbubbleNoise(textbubble, 7, true, false)
 			}
 		}
