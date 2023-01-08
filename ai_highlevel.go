@@ -9,6 +9,7 @@ const (
 	AI_PATROLLING
 	AI_SEARCHING
 	AI_ALERTED
+	AI_ENABLING_LIGHT_SOURCE
 
 	IDLE_CHATTER_FREQUENCY = 70
 )
@@ -38,7 +39,7 @@ func (p *pawn) ai_act() {
 	p.ai.initialy = p.y
 	// first, check situation
 	switch p.ai.currentState {
-	case AI_ROAM, AI_PATROLLING:
+	case AI_ROAM, AI_PATROLLING, AI_ENABLING_LIGHT_SOURCE:
 		p.ai_checkRoam()
 	case AI_SEARCHING:
 		p.ai_checkSearching()
@@ -52,7 +53,7 @@ func (p *pawn) ai_act() {
 	p.ai_timeoutState()
 
 	// second, act
-	// SECOND check for time. It is needed.
+	// SECOND check for time (time to act may be overwritten by checks)
 	if p.isTimeToAct() {
 		switch p.ai.currentState {
 		case AI_ROAM:
@@ -63,6 +64,8 @@ func (p *pawn) ai_act() {
 			p.ai_actSearching()
 		case AI_ALERTED:
 			p.ai_actAlerted()
+		case AI_ENABLING_LIGHT_SOURCE:
+			p.ai_actEnableLightSource()
 		default:
 			log.AppendMessage("No ACT func for some ai state!")
 		}
@@ -117,6 +120,15 @@ func (p *pawn) ai_checkRoam() {
 		p.spendTurnsForAction(10)
 		return
 	}
+	if p.ai.currentState != AI_ENABLING_LIGHT_SOURCE {
+		t := CURRENT_MAP.findUnlitTorchAroundCoords(p.x, p.y, p.getStaticData().sightRangeCalm)
+		if t != nil && CURRENT_MAP.lineOfSightExists(p.x, p.y, t.x, t.y, true) {
+			p.doTextbubbleNoise(p.getStaticData().getRandomResponseTo(SITUATION_SPOTTED_UNLIT_TORCH), 7, false, false)
+			p.ai.currentState = AI_ENABLING_LIGHT_SOURCE
+			p.ai.setStateTimeout(250)
+			p.ai.searchx, p.ai.searchy = t.x, t.y
+		}
+	}
 }
 
 func (p *pawn) ai_actRoam() {
@@ -159,6 +171,18 @@ func (p *pawn) ai_checkSearching() {
 		p.doTextbubbleNoise(textbubble, 7, true, false)
 		return
 	}
+}
+
+func (p *pawn) ai_actEnableLightSource() {
+	ai := p.ai
+	if areCoordinatesInRangeFrom(p.x, p.y, p.ai.searchx, p.ai.searchy, 1) {
+		ls := CURRENT_MAP.getFurnitureAt(p.ai.searchx, p.ai.searchy)
+		ls.isLit = true
+		p.spendTurnsForAction(20)
+		p.doTextbubbleNoise(p.getStaticData().getRandomResponseTo(SITUATION_HAVE_LIT_TORCH), 7, false, false)
+		p.ai.setStateTimeout(0)
+	}
+	p.ai_tryToMoveToCoords(ai.searchx, ai.searchy)
 }
 
 func (p *pawn) ai_actSearching() {

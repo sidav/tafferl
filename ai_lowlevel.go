@@ -18,6 +18,12 @@ func (p *pawn) ai_timeoutState() {
 			}
 		case AI_ALERTED:
 			p.ai.currentState = AI_SEARCHING
+		case AI_ENABLING_LIGHT_SOURCE:
+			if p.ai.route != nil {
+				p.ai.currentState = AI_PATROLLING
+			} else {
+				p.ai.currentState = AI_ROAM
+			}
 		case AI_ROAM:
 			if p.ai.route != nil {
 				p.ai.currentState = AI_PATROLLING

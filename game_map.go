@@ -150,10 +150,11 @@ func (dung *gameMap) openDoor(x, y int) {
 	dung.tiles[x][y].isOpened = true
 }
 
-func (dung *gameMap) visibleLineExists(fx, fy, tx, ty int, ignoreStart bool) bool {
+func (dung *gameMap) lineOfSightExists(fx, fy, tx, ty int, ignoreStart bool) bool { // this is not FOV!
+	// TODO: upgrade with better LoS algorithm
 	line := graphic_primitives.GetLine(fx, fy, tx, ty)
-	for i, l := range *line {
-		if i == len(*line)-1 {
+	for i, l := range line {
+		if i == len(line)-1 {
 			break
 		}
 		if i == 0 && ignoreStart {
@@ -234,6 +235,15 @@ func (dung *gameMap) defaultMovementActionByVector(p *pawn, mayOpenDoor bool, vx
 		return true
 	}
 	return false
+}
+
+func (dung *gameMap) findUnlitTorchAroundCoords(x, y, radius int) *furniture {
+	for _, t := range dung.furnitures {
+		if t.canBeExtinguished() && !t.isLit && areCoordinatesInRangeFrom(x, y, t.x, t.y, radius) {
+			return t
+		}
+	}
+	return nil
 }
 
 func (dung *gameMap) isTilePassableAndNotOccupied(x, y int) bool {

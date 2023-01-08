@@ -16,6 +16,8 @@ const (
 	SITUATION_STARTING_PURSUIT
 	SITUATION_ENEMY_DISAPPEARED
 	SITUATION_SEARCH_STOPPED
+	SITUATION_SPOTTED_UNLIT_TORCH
+	SITUATION_HAVE_LIT_TORCH
 	SITUATION_MAKING_DISTRACTING_NOISE
 )
 
@@ -93,6 +95,17 @@ var pawnStaticTable = map[pawnCode]pawnStaticData{
 				"Too much coffee.",
 				"I'll better return.",
 			},
+			SITUATION_SPOTTED_UNLIT_TORCH: {
+				"Oh no, not this again.",
+				"Fire out?",
+				"It should be lit there.",
+				"Why is it dark?",
+			},
+			SITUATION_HAVE_LIT_TORCH: {
+				"It's better now.",
+				"That's better.",
+				"Now I can see again.",
+			},
 		},
 	},
 	PAWN_ARCHER: {
@@ -138,6 +151,17 @@ var pawnStaticTable = map[pawnCode]pawnStaticData{
 				"Taff it.",
 				"Too much coffee.",
 				"I'll better return.",
+			},
+			SITUATION_SPOTTED_UNLIT_TORCH: {
+				"Oh no, not this again.",
+				"Fire out?",
+				"It should be lit there.",
+				"Why is it dark?",
+			},
+			SITUATION_HAVE_LIT_TORCH: {
+				"It's better now.",
+				"That's better.",
+				"Now I can see again.",
 			},
 		},
 	},
