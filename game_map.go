@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"tafferl/lib/calculations/graphic_primitives"
+	"tafferl/lib/calculations/primitives"
 )
 
 type gameMap struct {
@@ -152,7 +152,7 @@ func (dung *gameMap) openDoor(x, y int) {
 
 func (dung *gameMap) lineOfSightExists(fx, fy, tx, ty int, ignoreStart bool) bool { // this is not FOV!
 	// TODO: upgrade with better LoS algorithm
-	line := graphic_primitives.GetLine(fx, fy, tx, ty)
+	line := primitives.GetLine(fx, fy, tx, ty)
 	for i, l := range line {
 		if i == len(line)-1 {
 			break
