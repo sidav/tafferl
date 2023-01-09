@@ -27,36 +27,34 @@ func GetLine(fromx, fromy, tox, toy int) []Point {
 	if toy < fromy {
 		ymod = -1
 	}
-	error := 0
 	if deltax >= deltay {
 		y := fromy
-		deltaerr := deltay
+		eps := deltax >> 1
 		for x := fromx; x != tox+xmod; x += xmod {
 			line = append(line, Point{x, y})
-			error += deltaerr
-			if 2*error >= deltax {
+			eps += deltay
+			if eps >= deltax {
 				y += ymod
-				error -= deltax
+				eps -= deltax
 			}
 		}
 	} else {
 		x := fromx
-		deltaerr := deltax
+		eps := deltay >> 1
 		for y := fromy; y != toy+ymod; y += ymod {
 			line = append(line, Point{x, y})
-			error += deltaerr
-			if 2*error >= deltay {
+			eps += deltax
+			if eps >= deltay {
 				x += xmod
-				error -= deltay
+				eps -= deltay
 			}
 		}
 	}
 	return line
 }
 
-func GetAllLinesVariations(fromx, fromy, tox, toy int) [][]Point {
-	// uses "digital lines" algorithm
-	// TODO: think how to reduce the number of repeating lines
+func GetAllDigitalLines(fromx, fromy, tox, toy int) [][]Point {
+	// uses "digital lines" algorithm  (modification of Bresenham's)
 
 	if fromx == tox && fromy == toy {
 		return [][]Point{{Point{
@@ -77,15 +75,15 @@ func GetAllLinesVariations(fromx, fromy, tox, toy int) [][]Point {
 		ymod = -1
 	}
 	if deltax >= deltay {
-		deltaEps := deltay
-		for startEps := -deltax / 2; 2*startEps < deltax; startEps++ {
+		startEpsMod := Gcd(deltax, deltay) // needed to reduce the number of repeating lines
+		for startEps := 0; startEps < deltax; startEps += startEpsMod {
 			eps := startEps
 			line := make([]Point, 0)
 			y := fromy
 			for x := fromx; x != tox+xmod; x += xmod {
 				line = append(line, Point{x, y})
-				eps += deltaEps
-				if 2*eps >= deltax {
+				eps += deltay
+				if eps >= deltax {
 					y += ymod
 					eps -= deltax
 				}
@@ -93,15 +91,15 @@ func GetAllLinesVariations(fromx, fromy, tox, toy int) [][]Point {
 			lines = append(lines, line)
 		}
 	} else {
-		deltaEps := deltax
-		for startEps := -deltay / 2; 2*startEps < deltay; startEps++ {
+		startEpsMod := Gcd(deltay, deltax)
+		for startEps := 0; startEps < deltay; startEps += startEpsMod {
 			eps := startEps
 			x := fromx
 			line := make([]Point, 0)
 			for y := fromy; y != toy+ymod; y += ymod {
 				line = append(line, Point{x, y})
-				eps += deltaEps
-				if 2*eps >= deltay {
+				eps += deltax
+				if eps >= deltay {
 					x += xmod
 					eps -= deltay
 				}
@@ -110,4 +108,21 @@ func GetAllLinesVariations(fromx, fromy, tox, toy int) [][]Point {
 		}
 	}
 	return lines
+}
+
+func Gcd(a, b int) int {
+	if a == 0 {
+		return b
+	}
+	if b == 0 {
+		return a
+	}
+	for a != b {
+		if a > b {
+			a -= b
+		} else {
+			b -= a
+		}
+	}
+	return a
 }
