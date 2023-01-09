@@ -125,7 +125,7 @@ func (p *playerController) actShootTargetMode() {
 	if key == "f" {
 		if p.gm.getPermissiveLineOfSight(p.player.x, p.player.y, p.crosschairX, p.crosschairY, true) != nil {
 			log.AppendMessage("I shoot.")
-			applyArrowEffect(p.player.inv.arrows[p.currSelectedItemIndex].name, p.crosschairX, p.crosschairY)
+			applyArrowEffect(p.player.inv.items[p.currSelectedItemIndex].name, p.crosschairX, p.crosschairY)
 			p.player.spendTurnsForAction(10)
 			p.setMode(PCMODE_NORMAL)
 		} else {
@@ -148,10 +148,10 @@ func (p *playerController) actSelectDirectionMode() {
 }
 
 func (p *playerController) selectNextItem() {
-	if len(p.player.inv.arrows) == 0 {
+	if len(p.player.inv.items) == 0 {
 		p.currSelectedItemIndex = -1
 	} else {
-		p.currSelectedItemIndex = (p.currSelectedItemIndex + 1) % len(p.player.inv.arrows)
+		p.currSelectedItemIndex = (p.currSelectedItemIndex + 1) % len(p.player.inv.items)
 	}
 }
 

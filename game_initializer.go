@@ -226,7 +226,7 @@ func (m *missionInitializer) finalizeEnemies() {
 				gold:                0,
 				water:               0,
 				hasTorchOfIntensity: 2,
-				arrows:              nil,
+				items:               nil,
 				targetItems:         nil,
 			}
 		}
@@ -253,19 +253,19 @@ func (m *missionInitializer) distributeLootBetweenCabinets(totalDesiredLootAmoun
 			f.inv.gold = rnd.RandInRange(minGoldPerCabinet, maxGoldPerCabinet)
 			// water
 			if rnd.OneChanceFrom(3) {
-				f.inv.arrows[0].amount = 1
+				f.inv.addItemByName("Water arrow", 1)
 			}
 			// noise
 			if rnd.OneChanceFrom(10) {
-				f.inv.arrows[1].amount = 1
+				f.inv.addItemByName("Gas arrow", 1)
 			}
 			// gas
 			if rnd.OneChanceFrom(10) {
-				f.inv.arrows[2].amount = 1
+				f.inv.addItemByName("Noise arrow", 1)
 			}
 			// explosive
 			if rnd.OneChanceFrom(15) {
-				f.inv.arrows[3].amount = 1
+				f.inv.addItemByName("Explosive arrow", 1)
 			}
 		}
 	}

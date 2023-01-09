@@ -50,6 +50,8 @@ func (g *game) runGame() {
 		print(fmt.Sprintf("Init %d", CURRENT_MISSION_NUMBER))
 		mInit := missionInitializer{}
 		mInit.initializeMission(CURRENT_MISSION_NUMBER)
+		currPlayerController.player = CURRENT_MAP.player
+		currPlayerController.selectNextItem() // to reset currently selected item index
 
 		for GAME_IS_RUNNING && !CURRENT_MISSION_WON {
 			g.mainLoop()

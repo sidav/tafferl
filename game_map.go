@@ -229,7 +229,7 @@ func (dung *gameMap) defaultMovementActionByVector(p *pawn, mayOpenDoor bool, vx
 			// steal from furniture (if the pawn is player)
 			if furn.canBeLooted() {
 				stealString := fmt.Sprintf("Stole %d gold", furn.inv.gold)
-				for _, arrow := range furn.inv.arrows {
+				for _, arrow := range furn.inv.items {
 					if arrow.amount == 1 {
 						stealString += ", " + arrow.name
 					} else if arrow.amount > 1 {

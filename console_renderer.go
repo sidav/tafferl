@@ -127,8 +127,8 @@ func (rs *rendererStruct) renderUi() {
 	itemString := "No item selected (g)"
 	if rs.pc.currSelectedItemIndex >= 0 {
 		itemString = fmt.Sprintf("Item (g): x%d %s",
-			rs.gm.player.inv.arrows[rs.pc.currSelectedItemIndex].amount,
-			rs.gm.player.inv.arrows[rs.pc.currSelectedItemIndex].name)
+			rs.gm.player.inv.items[rs.pc.currSelectedItemIndex].amount,
+			rs.gm.player.inv.items[rs.pc.currSelectedItemIndex].name)
 	}
 	cw.PutString(libstrings.CenterStringWithSpaces(itemString, uiW), uiX, currLine)
 
