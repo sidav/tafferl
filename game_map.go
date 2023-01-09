@@ -150,8 +150,7 @@ func (dung *gameMap) openDoor(x, y int) {
 	dung.tiles[x][y].isOpened = true
 }
 
-func (dung *gameMap) lineOfSightExists(fx, fy, tx, ty int, ignoreStart bool) bool { // this is not FOV!
-	// TODO: upgrade with better LoS algorithm
+func (dung *gameMap) getLineOfSight(fx, fy, tx, ty int, ignoreStart bool) []primitives.Point { // this is not FOV!
 	line := primitives.GetLine(fx, fy, tx, ty)
 	for i, l := range line {
 		if i == len(line)-1 {
@@ -161,10 +160,32 @@ func (dung *gameMap) lineOfSightExists(fx, fy, tx, ty int, ignoreStart bool) boo
 			continue
 		}
 		if !areCoordinatesValid(l.X, l.Y) || dung.isTileOpaque(l.X, l.Y) {
-			return false
+			return nil
 		}
 	}
-	return true
+	return line
+}
+
+func (dung *gameMap) getPermissiveLineOfSight(fx, fy, tx, ty int, ignoreStart bool) []primitives.Point { // this is not FOV!
+	// Very expensive to call!
+	// Uses "digital line" LoS algorithm.
+	lines := primitives.GetAllDigitalLines(fx, fy, tx, ty)
+nextLine:
+	for _, line := range lines {
+		for i, l := range line {
+			if i == len(line)-1 {
+				break
+			}
+			if i == 0 && ignoreStart {
+				continue
+			}
+			if !areCoordinatesValid(l.X, l.Y) || dung.isTileOpaque(l.X, l.Y) {
+				continue nextLine
+			}
+		}
+		return line
+	}
+	return nil
 }
 
 // true if action has been commited

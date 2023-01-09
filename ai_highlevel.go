@@ -122,7 +122,7 @@ func (p *pawn) ai_checkRoam() {
 	}
 	if p.ai.currentState != AI_ENABLING_LIGHT_SOURCE && rnd.OneChanceFrom(10) {
 		t := CURRENT_MAP.findUnlitTorchAroundCoords(p.x, p.y, p.getStaticData().sightRangeCalm)
-		if t != nil && CURRENT_MAP.lineOfSightExists(p.x, p.y, t.x, t.y, true) {
+		if t != nil && CURRENT_MAP.getLineOfSight(p.x, p.y, t.x, t.y, true) != nil {
 			p.doTextbubbleNoise(p.getStaticData().getRandomResponseTo(SITUATION_SPOTTED_UNLIT_TORCH), 7, false, false)
 			p.ai.currentState = AI_ENABLING_LIGHT_SOURCE
 			p.ai.setStateTimeout(250)

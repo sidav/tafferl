@@ -123,12 +123,18 @@ func (p *playerController) actShootTargetMode() {
 		p.crosschairY += vy
 	}
 	if key == "f" {
-		applyArrowEffect(p.player.inv.arrows[p.currSelectedItemIndex].name, p.crosschairX, p.crosschairY)
-		p.player.spendTurnsForAction(10)
-		p.setMode(PCMODE_NORMAL)
+		if p.gm.getPermissiveLineOfSight(p.player.x, p.player.y, p.crosschairX, p.crosschairY, true) != nil {
+			log.AppendMessage("I shoot.")
+			applyArrowEffect(p.player.inv.arrows[p.currSelectedItemIndex].name, p.crosschairX, p.crosschairY)
+			p.player.spendTurnsForAction(10)
+			p.setMode(PCMODE_NORMAL)
+		} else {
+			log.AppendMessage("I can't see the target.")
+		}
 	}
 	if key == "ESCAPE" {
 		p.setMode(PCMODE_NORMAL)
+		log.AppendMessage("I cancel aiming.")
 	}
 }
 

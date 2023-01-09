@@ -186,14 +186,14 @@ func (rs *rendererStruct) drawTile(tile *tileStruct, onScreenX, onScreenY int, i
 		}
 		char = ':'
 	case TILE_WALL:
-		if isInLight {
-			cw.SetStyle(tcell.ColorBlack, tcell.ColorRed)
+		if isSeenNow {
+			cw.SetStyle(tcell.ColorBlack, tcell.ColorDarkRed)
 		} else {
 			cw.SetStyle(tcell.ColorBlack, tcell.ColorNavy)
 		}
-		if !isSeenNow {
-			cw.SetStyle(tcell.ColorBlack, tcell.ColorDarkGray)
-		}
+		//if !isSeenNow {
+		//	cw.SetStyle(tcell.ColorBlack, tcell.ColorDarkGray)
+		//}
 		char = ' '
 	case TILE_DOOR:
 		if isInLight {
@@ -277,10 +277,23 @@ func (rs *rendererStruct) drawBodies() {
 }
 
 func (rs *rendererStruct) drawCrosschair() {
-	cw.SetStyle(tcell.ColorRed, tcell.ColorBlack)
 	chx, chy := rs.globalToOnScreen(rs.camX, rs.camY)
 	chx += rs.viewportW / 2
 	chy += rs.viewportH / 2
+	line := rs.gm.getPermissiveLineOfSight(rs.gm.player.x, rs.gm.player.y,
+		rs.camX+rs.viewportW/2, rs.camY+rs.viewportH/2, true)
+	if line == nil {
+		cw.SetStyle(tcell.ColorRed, tcell.ColorBlack)
+	} else {
+		cw.SetStyle(tcell.ColorGreen, tcell.ColorBlack)
+		for i, v := range line {
+			if i == 0 || i == len(line)-1 {
+				continue
+			}
+			cx, cy := rs.globalToOnScreen(v.GetCoords())
+			cw.PutChar('*', cx, cy)
+		}
+	}
 	if rs.shouldShowBlinking(blink_crosshair_each) {
 		// draw plus-shaped crosschair
 		cw.PutChar('|', chx, chy-1)
