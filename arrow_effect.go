@@ -7,6 +7,10 @@ func applyArrowEffect(arrowName string, x, y int) {
 		if furn != nil && furn.getCurrentLightLevel() > 0 && furn.getStaticData().isExtinguishable {
 			furn.isLit = false
 		}
+		pawnHere := CURRENT_MAP.getPawnAt(x, y)
+		if pawnHere != nil && pawnHere.inv.hasTorchOfIntensity > 0 {
+			pawnHere.inv.hasTorchOfIntensity = 0
+		}
 		CURRENT_MAP.createNoise(&noise{
 			creator:         nil,
 			x:               x,
