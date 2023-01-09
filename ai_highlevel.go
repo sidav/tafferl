@@ -120,7 +120,7 @@ func (p *pawn) ai_checkRoam() {
 		p.spendTurnsForAction(10)
 		return
 	}
-	if p.ai.currentState != AI_ENABLING_LIGHT_SOURCE {
+	if p.ai.currentState != AI_ENABLING_LIGHT_SOURCE && rnd.OneChanceFrom(10) {
 		t := CURRENT_MAP.findUnlitTorchAroundCoords(p.x, p.y, p.getStaticData().sightRangeCalm)
 		if t != nil && CURRENT_MAP.lineOfSightExists(p.x, p.y, t.x, t.y, true) {
 			p.doTextbubbleNoise(p.getStaticData().getRandomResponseTo(SITUATION_SPOTTED_UNLIT_TORCH), 7, false, false)
@@ -162,17 +162,6 @@ func (p *pawn) ai_actPatrolling() {
 	p.ai_tryToMoveToCoords(currWaypoint.X, currWaypoint.Y)
 }
 
-func (p *pawn) ai_checkSearching() {
-	if p.ai_canSeePlayer() {
-		p.ai.targetPawn = CURRENT_MAP.player
-		p.ai.currentState = AI_ALERTED
-		p.ai.searchx, p.ai.searchy = CURRENT_MAP.player.getCoords()
-		textbubble := p.getStaticData().getRandomResponseTo(SITUATION_STARTING_PURSUIT)
-		p.doTextbubbleNoise(textbubble, 7, true, false)
-		return
-	}
-}
-
 func (p *pawn) ai_actEnableLightSource() {
 	ai := p.ai
 	if areCoordinatesInRangeFrom(p.x, p.y, p.ai.searchx, p.ai.searchy, 1) {
@@ -183,6 +172,17 @@ func (p *pawn) ai_actEnableLightSource() {
 		p.ai.setStateTimeout(0)
 	}
 	p.ai_tryToMoveToCoords(ai.searchx, ai.searchy)
+}
+
+func (p *pawn) ai_checkSearching() {
+	if p.ai_canSeePlayer() {
+		p.ai.targetPawn = CURRENT_MAP.player
+		p.ai.currentState = AI_ALERTED
+		p.ai.searchx, p.ai.searchy = CURRENT_MAP.player.getCoords()
+		textbubble := p.getStaticData().getRandomResponseTo(SITUATION_STARTING_PURSUIT)
+		p.doTextbubbleNoise(textbubble, 7, true, false)
+		return
+	}
 }
 
 func (p *pawn) ai_actSearching() {

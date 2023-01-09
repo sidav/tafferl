@@ -193,11 +193,11 @@ func (dung *gameMap) defaultMovementActionByVector(p *pawn, mayOpenDoor bool, vx
 				p.spendTurnsForAction(p.getStaticData().timeForWalking)
 				return true
 			}
-			if furn.canBeExtinguished() && p.inv.water > 0 {
+			if furn.isLit && furn.canBeExtinguished() && p.inv.water > 0 {
 				dung.createNoise(&noise{
 					x:          x,
 					y:          y,
-					intensity:  7,
+					intensity:  5,
 					textBubble: "*PSSSSH*",
 					suspicious: true,
 				})

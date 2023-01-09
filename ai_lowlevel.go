@@ -34,7 +34,7 @@ func (p *pawn) ai_timeoutState() {
 }
 
 func (p *pawn) ai_isCalm() bool {
-	return p.ai.currentState == AI_PATROLLING || p.ai.currentState == AI_ROAM
+	return p.ai.currentState == AI_PATROLLING || p.ai.currentState == AI_ROAM || p.ai.currentState == AI_ENABLING_LIGHT_SOURCE
 }
 
 func (p *pawn) ai_hitAnotherPawn(t *pawn) {

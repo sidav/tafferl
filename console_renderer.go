@@ -302,6 +302,7 @@ func (rs *rendererStruct) drawFurniture(f *furniture) {
 		return
 	}
 	sx, sy := rs.globalToOnScreen(x, y)
+	char := '?'
 	isInLight := rs.gm.tiles[x][y].lightLevel > 0
 	switch f.code {
 	case FURNITURE_TORCH:
@@ -310,29 +311,30 @@ func (rs *rendererStruct) drawFurniture(f *furniture) {
 		} else {
 			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
-		cw.PutChar('|', sx, sy)
+		char = '|'
 	case FURNITURE_CABINET:
 		if isInLight {
 			cw.SetStyle(tcell.ColorDarkRed, tcell.ColorBlack)
 		} else {
 			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
-		cw.PutChar('&', sx, sy)
+		char = '&'
 	case FURNITURE_TABLE:
 		if isInLight {
 			cw.SetStyle(tcell.ColorGreen, tcell.ColorBlack)
 		} else {
 			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
-		cw.PutChar('=', sx, sy)
+		char = '='
 	case FURNITURE_BUSH:
 		if isInLight {
 			cw.SetStyle(tcell.ColorGreen, tcell.ColorBlack)
 		} else {
 			cw.SetStyle(tcell.ColorNavy, tcell.ColorBlack)
 		}
-		cw.PutChar('"', sx, sy)
+		char = '"'
 	}
+	cw.PutChar(char, sx, sy)
 }
 
 func (rs *rendererStruct) renderNoisesForPlayer() {
@@ -392,7 +394,7 @@ func (rs *rendererStruct) onScreenToGlobal(sx, sy int) (int, int) {
 }
 
 func (rs *rendererStruct) shouldShowBlinking(period int) bool {
-	return (rs.currentFrame/period)%2 == 0
+	return rs.pc.redrawNeeded || (rs.currentFrame/period)%2 == 0
 }
 
 func (rs *rendererStruct) renderLog() {
