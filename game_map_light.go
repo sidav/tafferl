@@ -15,13 +15,23 @@ func (dung *gameMap) recalculateLights() {
 	for _, fur := range dung.furnitures {
 		ls := fur.getCurrentLightLevel()
 		if ls > 0 {
-			for x := fur.x - ls; x <= fur.x+ls; x++ {
-				for y := fur.y - ls; y <= fur.y+ls; y++ {
-					if areCoordinatesValid(x, y) {
-						if calculations.AreCoordsInRange(fur.x, fur.y, x, y, ls) && dung.getLineOfSight(fur.x, fur.y, x, y, true) != nil {
-							dung.tiles[x][y].lightLevel = 1 // WIP. Maybe different light intensity?
-						}
-					}
+			dung.addLightAround(fur.x, fur.y, ls)
+		}
+	}
+	// pass through pawns (they may have torches)
+	for _, p := range dung.pawns {
+		if p.inv != nil && p.inv.hasTorchOfIntensity > 0 {
+			dung.addLightAround(p.x, p.y, p.inv.hasTorchOfIntensity)
+		}
+	}
+}
+
+func (gm *gameMap) addLightAround(sx, sy, ls int) {
+	for x := sx - ls; x <= sx+ls; x++ {
+		for y := sy - ls; y <= sy+ls; y++ {
+			if areCoordinatesValid(x, y) {
+				if calculations.AreCoordsInRange(sx, sy, x, y, ls) && gm.getLineOfSight(sx, sy, x, y, true) != nil {
+					gm.tiles[x][y].lightLevel = 1 // WIP. Maybe different light intensity?
 				}
 			}
 		}

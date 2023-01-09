@@ -64,7 +64,7 @@ func (m *missionInitializer) generateAndInitMap(filesPath string) {
 	m.addRandomFurniture()
 	m.spawnEnemiesAtRoutes(generatedMap)
 	m.spawnRoamingEnemies(currMission.AdditionalGuardsNumber[currDifficultyNumber])
-	m.makeGuardsTheArchers()
+	m.finalizeEnemies()
 	m.distributeLootBetweenCabinets(currMission.TotalLoot[currDifficultyNumber])
 	m.putTargetItems()
 }
@@ -211,11 +211,24 @@ func (m *missionInitializer) spawnRoamingEnemies(roamingEnemiesCount int) {
 	}
 }
 
-func (m *missionInitializer) makeGuardsTheArchers() {
+func (m *missionInitializer) finalizeEnemies() {
+	// first, make some of them into archers
 	for i := 0; i < currMission.NumberOfArchersFromGuards[currDifficultyNumber]; i++ {
 		index := rnd.Rand(len(CURRENT_MAP.pawns))
 		if CURRENT_MAP.pawns[index].code == PAWN_GUARD {
 			CURRENT_MAP.pawns[index].code = PAWN_ARCHER
+		}
+	}
+	// second, add torches to them if needed
+	for _, p := range CURRENT_MAP.pawns {
+		if p.getStaticData().chanceToHaveTorch < rnd.Rand(100) {
+			p.inv = &inventory{
+				gold:                0,
+				water:               0,
+				hasTorchOfIntensity: 2,
+				arrows:              nil,
+				targetItems:         nil,
+			}
 		}
 	}
 }

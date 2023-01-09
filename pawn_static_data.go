@@ -30,6 +30,7 @@ type pawnStaticData struct {
 	timeForWalking, timeForRunning                           int
 	runningNoiseIntensity, walkingNoiseIntensity             int
 	sightRangeCalm, sightRangeAlerted, sightRangeAlertedDark int
+	chanceToHaveTorch                                        int
 
 	responsesForSituations map[responseSituation][]string
 }
@@ -52,6 +53,7 @@ var pawnStaticTable = map[pawnCode]pawnStaticData{
 		timeForRunning:        8,
 		runningNoiseIntensity: 10,
 		walkingNoiseIntensity: 7,
+		chanceToHaveTorch:     10,
 
 		sightRangeAlerted:     9,
 		sightRangeAlertedDark: 3,
@@ -116,6 +118,7 @@ var pawnStaticTable = map[pawnCode]pawnStaticData{
 		timeForRunning:        9,
 		runningNoiseIntensity: 10,
 		walkingNoiseIntensity: 7,
+		chanceToHaveTorch:     25,
 
 		sightRangeAlerted:     9,
 		sightRangeAlertedDark: 3,

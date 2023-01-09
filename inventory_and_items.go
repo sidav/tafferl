@@ -1,10 +1,11 @@
 package main
 
 type inventory struct {
-	gold        int
-	water       int
-	arrows      []arrow
-	targetItems []string
+	gold                int
+	water               int
+	hasTorchOfIntensity int
+	arrows              []arrow
+	targetItems         []string
 }
 
 type arrow struct {
