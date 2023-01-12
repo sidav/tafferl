@@ -221,7 +221,7 @@ func (m *missionInitializer) finalizeEnemies() {
 	}
 	// second, add torches to them if needed
 	for _, p := range CURRENT_MAP.pawns {
-		if p.getStaticData().chanceToHaveTorch < rnd.Rand(100) {
+		if rnd.Rand(100) < p.getStaticData().chanceToHaveTorch {
 			p.inv = &inventory{
 				gold:                0,
 				water:               0,
