@@ -22,6 +22,10 @@ func (dung *gameMap) getSize() (int, int) {
 	return len(dung.tiles), len(dung.tiles[0])
 }
 
+func (gm *gameMap) areCoordinatesValid(x, y int) bool {
+	return x >= 0 && y >= 0 && x < len(gm.tiles) && y < len(gm.tiles[0])
+}
+
 func (dung *gameMap) canPawnHearNoise(p *pawn, n *noise) bool {
 	return areCoordinatesInRangeFrom(p.x, p.y, n.x, n.y, n.intensity)
 }

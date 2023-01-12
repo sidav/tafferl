@@ -3,13 +3,9 @@ package main
 func applyArrowEffect(arrowName string, x, y int) {
 	switch arrowName {
 	case "Water arrow":
-		furn := CURRENT_MAP.getFurnitureAt(x, y)
-		if furn != nil && furn.getCurrentLightLevel() > 0 && furn.getStaticData().isExtinguishable {
-			furn.isLit = false
-		}
-		pawnHere := CURRENT_MAP.getPawnAt(x, y)
-		if pawnHere != nil && pawnHere.inv.hasTorchOfIntensity > 0 {
-			pawnHere.inv.hasTorchOfIntensity = 0
+		CURRENT_MAP.tiles[x][y].smokeHere = &smoke{
+			smokeCode: SMOKE_VAPOR,
+			thickness: 3,
 		}
 		CURRENT_MAP.createNoise(&noise{
 			creator:         nil,
@@ -22,19 +18,9 @@ func applyArrowEffect(arrowName string, x, y int) {
 		})
 	case "Gas arrow":
 		// Gas arrows extinguish the torches too!
-		furn := CURRENT_MAP.getFurnitureAt(x, y)
-		if furn != nil && furn.getCurrentLightLevel() > 0 && furn.getStaticData().isExtinguishable {
-			furn.isLit = false
-		}
-		for i := x - 1; i <= x+1; i++ {
-			for j := y - 1; j <= y+1; j++ {
-				pawnAt := CURRENT_MAP.getPawnAt(i, j)
-				if pawnAt != nil && pawnAt != CURRENT_MAP.player {
-					newBody := pawnAt.createBody(rnd.RandInRange(10, 15) * 10)
-					CURRENT_MAP.bodies = append(CURRENT_MAP.bodies, newBody)
-					CURRENT_MAP.removePawn(pawnAt)
-				}
-			}
+		CURRENT_MAP.tiles[x][y].smokeHere = &smoke{
+			smokeCode: SMOKE_GAS,
+			thickness: 5,
 		}
 		CURRENT_MAP.createNoise(&noise{
 			creator:         nil,

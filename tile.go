@@ -48,6 +48,7 @@ var tileStaticTable = map[tileCode]tileStaticData{
 
 type tileStruct struct {
 	code            tileCode
+	smokeHere       *smoke
 	wasSeenByPlayer bool
 	lightLevel      int
 	isOpened        bool // only if tile is a door
@@ -67,6 +68,9 @@ func (t *tileStruct) isPassable() bool {
 func (t *tileStruct) isOpaque() bool {
 	if t.isOpened {
 		return false
+	}
+	if t.smokeHere != nil && t.smokeHere.thickness >= t.smokeHere.getStaticData().blocksVisionAtThickness {
+		return true
 	}
 	return tileStaticTable[t.code].blocksVision
 }

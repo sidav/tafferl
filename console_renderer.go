@@ -210,6 +210,21 @@ func (rs *rendererStruct) drawTile(tile *tileStruct, onScreenX, onScreenY int, i
 			char = '+'
 		}
 	}
+	if isSeenNow && tile.smokeHere != nil {
+		// char = rune(strconv.Itoa(tile.smokeHere.thickness)[0])
+		char = '0'
+		if (CURRENT_TURN%7+3*onScreenX+5*onScreenY)%2 == 0 {
+			char = '8'
+		}
+		switch tile.smokeHere.smokeCode {
+		case SMOKE_VAPOR:
+			cw.SetStyle(tcell.ColorBlue, tcell.ColorBlack)
+		case SMOKE_GAS:
+			cw.SetStyle(tcell.ColorGreen, tcell.ColorBlack)
+		case SMOKE_BLACKOUT:
+			cw.SetStyle(tcell.ColorDarkGray, tcell.ColorBlack)
+		}
+	}
 	cw.PutChar(char, onScreenX, onScreenY)
 }
 

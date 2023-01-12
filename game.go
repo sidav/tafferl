@@ -71,6 +71,10 @@ func (g *game) mainLoop() {
 		currPlayerController.playerControl(&CURRENT_MAP)
 	}
 
+	if CURRENT_TURN%5 == 0 {
+		CURRENT_MAP.applySmokeEffects()
+	}
+
 	for i := 0; i < len(CURRENT_MAP.pawns); i++ {
 		if CURRENT_MAP.pawns[i].isDead() {
 			newBody := CURRENT_MAP.pawns[i].createBody(-1)
@@ -84,6 +88,9 @@ func (g *game) mainLoop() {
 				CURRENT_MAP.pawns[i].ai_act()
 			}
 		}
+	}
+	if CURRENT_TURN%10 == 0 {
+		CURRENT_MAP.propagateAllSmoke()
 	}
 	CURRENT_MAP.cleanupNoises()
 	CURRENT_MAP.checkBodiesForWakeUp()
