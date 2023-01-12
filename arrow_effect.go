@@ -32,6 +32,21 @@ func applyArrowEffect(arrowName string, x, y int) {
 			suspicious:      true,
 			showOnlyNotSeen: false,
 		})
+	case "Smoke arrow":
+		CURRENT_MAP.tiles[x][y].smokeHere = &smoke{
+			smokeCode: SMOKE_BLACKOUT,
+			thickness: 7,
+		}
+		CURRENT_MAP.createNoise(&noise{
+			creator:         nil,
+			x:               x,
+			y:               y,
+			intensity:       5,
+			duration:        10,
+			textBubble:      "*Puff!*",
+			suspicious:      true,
+			showOnlyNotSeen: false,
+		})
 	case "Explosive arrow":
 		for i := x - 1; i <= x+1; i++ {
 			for j := y - 1; j <= y+1; j++ {

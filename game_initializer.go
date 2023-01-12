@@ -259,6 +259,9 @@ func (m *missionInitializer) distributeLootBetweenCabinets(totalDesiredLootAmoun
 			if rnd.OneChanceFrom(10) {
 				f.inv.addItemByName("Gas arrow", 1)
 			}
+			if rnd.OneChanceFrom(10) {
+				f.inv.addItemByName("Smoke arrow", 1)
+			}
 			// gas
 			if rnd.OneChanceFrom(10) {
 				f.inv.addItemByName("Noise arrow", 1)

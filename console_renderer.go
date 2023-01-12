@@ -212,9 +212,12 @@ func (rs *rendererStruct) drawTile(tile *tileStruct, onScreenX, onScreenY int, i
 	}
 	if isSeenNow && tile.smokeHere != nil {
 		// char = rune(strconv.Itoa(tile.smokeHere.thickness)[0])
-		char = '0'
-		if (CURRENT_TURN%7+3*onScreenX+5*onScreenY)%2 == 0 {
+		char = '3'
+		if tile.smokeHere.thickness >= 2 {
 			char = '8'
+		}
+		if tile.smokeHere.thickness >= 5 {
+			char = '0'
 		}
 		switch tile.smokeHere.smokeCode {
 		case SMOKE_VAPOR:
