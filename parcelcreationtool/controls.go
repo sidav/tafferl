@@ -101,25 +101,23 @@ func reinitNewParcel() {
 }
 
 func openExistingParcel() {
-	prompt := *getParcelFileNames("parcels")
-	prompt = append(prompt, "Enter file name: ")
-	name := inputStringValue(&prompt)
+	prompt := []string{"Enter file name: "}
+	name := inputStringValue(prompt, getParcelFileNames("parcels"))
 	if name == "" {
 		return
 	}
-	currParcel.UnmarshalFromFile("parcels/" + name + ".json")
+	currParcel.UnmarshalFromFile("parcels/" + name)
 	currOpenedFileName = name
 	readItemsFromParcel(&currParcel)
 }
 
 func openExistingTemplate() {
-	prompt := *getParcelFileNames("templates")
-	prompt = append(prompt, "Enter file name: ")
-	name := inputStringValue(&prompt)
+	prompt := []string{"Enter file name: "}
+	name := inputStringValue(prompt, getParcelFileNames("templates"))
 	if name == "" {
 		return
 	}
-	currParcel.UnmarshalFromFile("templates/" + name + ".json")
+	currParcel.UnmarshalFromFile("templates/" + name)
 	currOpenedFileName = name
 	readItemsFromParcel(&currParcel)
 }
@@ -140,7 +138,7 @@ func readItemsFromParcel(p *Parcel) {
 	}
 }
 
-func getParcelFileNames(folderName string) *[]string {
+func getParcelFileNames(folderName string) []string {
 	pfn := make([]string, 0)
 	files, err := ioutil.ReadDir(folderName)
 	if err != nil {
@@ -150,7 +148,7 @@ func getParcelFileNames(folderName string) *[]string {
 	for _, f := range files {
 		pfn = append(pfn, f.Name())
 	}
-	return &pfn
+	return pfn
 }
 
 func deleteAtCursor() {
@@ -233,9 +231,9 @@ func createNewItem() {
 	newItem := Item{
 		X:             0,
 		Y:             0,
-		Name:          inputStringValue(&[]string{"Enter item name: "}),
+		Name:          inputStringValue([]string{"Enter item name: "}, nil),
 		Props:         "",
-		DisplayedChar: rune(inputStringValue(&[]string{"Enter item look: "})[0]),
+		DisplayedChar: rune(inputStringValue([]string{"Enter item look: "}, nil)[0]),
 	}
 	savedItems = append(savedItems, newItem)
 }
@@ -246,12 +244,11 @@ func saveParcelToFile(asTemplate bool) {
 		folderName = "templates"
 	}
 
-	prompt := *getParcelFileNames(folderName)
-	prompt = append(prompt, "SAVING AS "+folderName+": Enter file name (blank for auto name): ")
+	prompt := []string{"SAVING AS " + folderName + ": Enter file name (blank for auto name): "}
 	if currOpenedFileName != "" {
 		prompt = append(prompt, "Empty name will be replaced with "+currOpenedFileName)
 	}
-	name := inputStringValue(&prompt)
+	name := inputStringValue(prompt, getParcelFileNames(folderName))
 	if name == "ESCAPE" {
 		return
 	}
@@ -270,6 +267,8 @@ func saveParcelToFile(asTemplate bool) {
 			}
 		}
 	}
-	currParcel.MarshalToFile(folderName + "/" + name + ".json")
-	inputStringValue(&[]string{"Saved as " + folderName + "/" + name + ".json"})
+	fileName := fmt.Sprintf("%s/%s", folderName, name)
+	// fileName := fmt.Sprintf("%s/%s_%dx%d.json", folderName, name, pw, ph)
+	currParcel.MarshalToFile(fileName)
+	inputStringValue([]string{"Saved as " + fileName}, nil)
 }

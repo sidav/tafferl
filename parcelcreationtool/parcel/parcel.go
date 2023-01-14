@@ -2,7 +2,8 @@ package parcel
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"errors"
+	"fmt"
 	"os"
 	"strings"
 )
@@ -58,6 +59,10 @@ func (p *Parcel) MarshalToFile(filename string) {
 	if _, err := os.Stat(folderName); os.IsNotExist(err) {
 		os.Mkdir(folderName, 0777)
 	}
+	pw, ph := p.GetSize()
+	if !strings.Contains(filename, fmt.Sprintf("%dx%d.json", pw, ph)) {
+		filename += fmt.Sprintf("%dx%d.json", pw, ph)
+	}
 	file, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
 	if err != nil {
 		panic(err)
@@ -70,7 +75,10 @@ func (p *Parcel) MarshalToFile(filename string) {
 }
 
 func (p *Parcel) UnmarshalFromFile(filename string) {
-	jsn, err := ioutil.ReadFile(filename)
+	if _, err := os.Stat(filename); errors.Is(err, os.ErrNotExist) {
+		filename += ".json"
+	}
+	jsn, err := os.ReadFile(filename)
 	if err == nil {
 		json.Unmarshal(jsn, p)
 	}

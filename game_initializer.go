@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"strings"
 	generator2 "tafferl/parcelcreationtool/generator"
 )
 
@@ -122,7 +123,7 @@ func (m *missionInitializer) spawnPlayer(l *generator2.Level) {
 
 func (m *missionInitializer) spawnFurnitureFromGenerated(l *generator2.Level) {
 	for _, i := range l.Items {
-		switch i.Name {
+		switch strings.ToUpper(i.Name) {
 		case "ENTRYPOINT":
 			continue // do nothing
 		case "TORCH":

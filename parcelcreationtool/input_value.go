@@ -8,7 +8,7 @@ import (
 func inputIntValue(prompt string) int {
 	inputString := ""
 	for {
-		drawInputPrompt(&[]string{prompt}, inputString)
+		drawInputPrompt([]string{prompt}, inputString)
 		key := console.ReadKey()
 		if key == "ENTER" {
 			res, _ := strconv.Atoi(inputString)
@@ -27,10 +27,11 @@ func inputIntValue(prompt string) int {
 	return 0
 }
 
-func inputStringValue(prompts *[]string) string {
+func inputStringValue(prompts []string, offeredVariants []string) string {
 	inputString := ""
+	currIndex := len(offeredVariants)
 	for {
-		drawInputPrompt(prompts, inputString)
+		drawInputPrompt(append(offeredVariants, prompts...), inputString)
 		key := console.ReadKey()
 		if key == "ENTER" {
 			return inputString
@@ -38,6 +39,30 @@ func inputStringValue(prompts *[]string) string {
 		if key == "BACKSPACE" {
 			if len(inputString) > 0 {
 				inputString = inputString[:len(inputString)-1]
+			}
+			continue
+		}
+		if key == "UP" {
+			currIndex--
+			if currIndex < 0 {
+				currIndex = len(offeredVariants)
+			}
+			if currIndex == len(offeredVariants) {
+				inputString = ""
+			} else {
+				inputString = offeredVariants[currIndex]
+			}
+			continue
+		}
+		if key == "DOWN" {
+			currIndex++
+			if currIndex > len(offeredVariants) {
+				currIndex = 0
+			}
+			if currIndex == len(offeredVariants) {
+				inputString = ""
+			} else {
+				inputString = offeredVariants[currIndex]
 			}
 			continue
 		}
@@ -49,15 +74,15 @@ func inputStringValue(prompts *[]string) string {
 	return ""
 }
 
-func drawInputPrompt(prompt *[]string, input string) {
+func drawInputPrompt(prompt []string, input string) {
 	console.ClearScreen()
 	console.SetStyle(tcell.ColorBlack, tcell.ColorBeige)
 	_, ch := console.GetConsoleSize()
-	for i := len(*prompt) - 1; i >= 0; i-- {
-		if len(*prompt) == 0 {
+	for i := len(prompt) - 1; i >= 0; i-- {
+		if len(prompt) == 0 {
 			panic("Wtf, zero length!")
 		}
-		console.PutString((*prompt)[len(*prompt)-i-1], 0, ch-i-2)
+		console.PutString((prompt)[len(prompt)-i-1], 0, ch-i-2)
 	}
 	console.PutString(">"+input+"_", 0, ch-1)
 	defer console.ResetStyle()
