@@ -15,7 +15,7 @@ type playerController struct {
 	modeToReturnTo pcMode
 
 	player                *pawn
-	gm                    *gameMap
+	gm                    *scene
 	redrawNeeded          bool
 	currSelectedItemIndex int
 
@@ -24,7 +24,7 @@ type playerController struct {
 	wasInterruptedForRendering bool
 }
 
-func (p *playerController) playerControl(gm *gameMap) {
+func (p *playerController) playerControl(gm *scene) {
 	p.gm = gm
 	p.player = gm.player
 	p.redrawNeeded = false

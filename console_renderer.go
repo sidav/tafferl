@@ -22,7 +22,7 @@ const (
 )
 
 type rendererStruct struct {
-	gm                   *gameMap
+	gm                   *scene
 	pc                   *playerController
 	camX, camY           int
 	viewportW, viewportH int
@@ -33,7 +33,7 @@ func (rs *rendererStruct) initDefaults() {
 
 }
 
-func (rs *rendererStruct) renderGameScreen(gm *gameMap, pc *playerController) {
+func (rs *rendererStruct) renderGameScreen(gm *scene, pc *playerController) {
 	if !(rs.currentFrame%frameskip == 0 || pc.redrawNeeded) {
 		time.Sleep(time.Duration(200/frameskip) * time.Millisecond)
 		rs.currentFrame++

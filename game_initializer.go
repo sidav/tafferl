@@ -16,7 +16,7 @@ func (m *missionInitializer) initializeMission(missionNumber int) { //crap of co
 	if CURRENT_MAP.player != nil && CURRENT_MAP.player.inv != nil {
 		m.goldFromPreviousMission = CURRENT_MAP.player.inv.gold
 	}
-	CURRENT_MAP = gameMap{}
+	CURRENT_MAP = scene{}
 	CURRENT_MAP.pawns = make([]*pawn, 0)
 	filesDir := fmt.Sprintf("missions/mission%d/", missionNumber)
 	m.generateAndInitMap(filesDir)
@@ -102,6 +102,9 @@ func (m *missionInitializer) spawnPlayer(l *generator2.Level) {
 	CURRENT_MAP.player.inv.init()
 	CURRENT_MAP.player.inv.gold += currMission.AdditionalStartingGold
 	CURRENT_MAP.player.inv.gold += m.goldFromPreviousMission
+	CURRENT_MAP.player.inv.addItemByName("Water arrow", 1)
+	CURRENT_MAP.player.inv.addItemByName("Gas arrow", 1)
+	CURRENT_MAP.player.inv.addItemByName("Smoke arrow", 1)
 
 	//CURRENT_MAP.player.inv.arrows[0].amount = 2
 	//CURRENT_MAP.player.inv.arrows[1].amount = 1
