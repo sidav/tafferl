@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 	generator2 "tafferl/parcelcreationtool/generator"
 )
@@ -36,7 +36,7 @@ func (m *missionInitializer) generateAndInitMap(filesPath string) {
 
 	// mission unmarshalling
 	currMission = &Mission{}
-	jsn, err := ioutil.ReadFile(filesPath + "mission.json")
+	jsn, err := os.ReadFile(filesPath + "mission.json")
 	if err == nil {
 		json.Unmarshal(jsn, currMission)
 	} else {

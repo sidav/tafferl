@@ -8,4 +8,7 @@ func beforeRun() {
 
 func beforeExit() {
 	cw.Close()
+	if e := recover(); e != nil {
+		panic(e)
+	}
 }

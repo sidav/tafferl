@@ -22,7 +22,3 @@ type Mission struct {
 	Rewards                   []int
 	TotalLoot                 []int
 }
-
-func (m *Mission) readFromFile(filename string) {
-
-}

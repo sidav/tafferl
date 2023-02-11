@@ -1,6 +1,7 @@
 package tcell_console_wrapper
 
 import (
+	"fmt"
 	"github.com/gdamore/tcell/v2"
 	"strings"
 	"time"
@@ -50,6 +51,20 @@ func (c *ConsoleWrapper) PutChar(chr rune, x, y int) {
 func (c *ConsoleWrapper) PutString(str string, x, y int) {
 	for i := 0; i < len(str); i++ {
 		c.screen.SetCell(x+i, y, c.style, rune(str[i]))
+	}
+}
+
+func (c *ConsoleWrapper) PutStringf(x, y int, str string, args ...interface{}) {
+	str = fmt.Sprintf(str, args...)
+	for i := 0; i < len(str); i++ {
+		c.screen.SetCell(x+i, y, c.style, rune(str[i]))
+	}
+}
+
+func (c *ConsoleWrapper) PutStringCenteredAt(str string, x, y int) {
+	length := len(str)
+	for i := range str {
+		c.screen.SetCell(x+i-length/2, y, c.style, rune(str[i]))
 	}
 }
 
