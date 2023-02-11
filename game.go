@@ -63,10 +63,20 @@ func (g *game) runGame() {
 }
 
 func (g *game) mainLoop() {
+	if CURRENT_MAP.checkIfPlayerLost() {
+		gameover()
+		GAME_IS_RUNNING = false
+		return
+	}
+	if CURRENT_MAP.checkIfPlayerWon() {
+		CURRENT_MISSION_WON = true
+		return
+	}
+
 	CURRENT_MAP.recalculateLights()
 	CURRENT_MAP.updateVisibility()
 
-	for GAME_IS_RUNNING && !CURRENT_MISSION_WON && CURRENT_MAP.player.isTimeToAct() {
+	for GAME_IS_RUNNING && CURRENT_MAP.player.isTimeToAct() {
 		renderer.renderGameScreen(&CURRENT_MAP, &currPlayerController)
 		currPlayerController.playerControl(&CURRENT_MAP)
 	}

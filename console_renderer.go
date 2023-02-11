@@ -35,7 +35,7 @@ func (rs *rendererStruct) initDefaults() {
 
 func (rs *rendererStruct) renderGameScreen(gm *scene, pc *playerController) {
 	if !(rs.currentFrame%frameskip == 0 || pc.redrawNeeded) {
-		time.Sleep(time.Duration(200/frameskip) * time.Millisecond)
+		time.Sleep(time.Duration(125/frameskip) * time.Millisecond)
 		rs.currentFrame++
 		return
 	}

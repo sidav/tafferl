@@ -70,6 +70,8 @@ func (p *playerController) actNormalMode() {
 	case "r":
 		p.gm.player.isRunning = !p.gm.player.isRunning
 		p.redrawNeeded = true
+	case "DELETE":
+		p.gm.player.inv.gold += 250
 	}
 	vx, vy := p.keyToDirection(key)
 	if vx != 0 || vy != 0 {
