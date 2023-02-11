@@ -1,15 +1,24 @@
 package main
 
-import . "tafferl/parcelcreationtool/parcel"
+import (
+	"os"
+	. "tafferl/parcelcreationtool/parcel"
+)
 
 var (
 	crs        cursor
 	running    bool
 	currParcel Parcel
 	currMode   mode
+	currPath   string
 )
 
 func main() {
+	currPath = ""
+	if len(os.Args) > 1 {
+		currPath = os.Args[1] + "/"
+	}
+
 	console.Init()
 	defer console.Close()
 

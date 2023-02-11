@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	. "tafferl/parcelcreationtool/parcel"
 )
@@ -106,7 +105,7 @@ func openExistingParcel() {
 	if name == "" {
 		return
 	}
-	currParcel.UnmarshalFromFile("parcels/" + name)
+	currParcel.UnmarshalFromFile(currPath + "parcels/" + name)
 	currOpenedFileName = name
 	readItemsFromParcel(&currParcel)
 }
@@ -117,7 +116,7 @@ func openExistingTemplate() {
 	if name == "" {
 		return
 	}
-	currParcel.UnmarshalFromFile("templates/" + name)
+	currParcel.UnmarshalFromFile(currPath + "templates/" + name)
 	currOpenedFileName = name
 	readItemsFromParcel(&currParcel)
 }
@@ -140,7 +139,7 @@ func readItemsFromParcel(p *Parcel) {
 
 func getParcelFileNames(folderName string) []string {
 	pfn := make([]string, 0)
-	files, err := ioutil.ReadDir(folderName)
+	files, err := os.ReadDir(currPath + folderName)
 	if err != nil {
 		panic(err)
 	}
@@ -267,7 +266,7 @@ func saveParcelToFile(asTemplate bool) {
 			}
 		}
 	}
-	fileName := fmt.Sprintf("%s/%s", folderName, name)
+	fileName := fmt.Sprintf("%s%s/%s", currPath, folderName, name)
 	// fileName := fmt.Sprintf("%s/%s_%dx%d.json", folderName, name, pw, ph)
 	currParcel.MarshalToFile(fileName)
 	inputStringValue([]string{"Saved as " + fileName}, nil)

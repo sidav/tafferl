@@ -52,7 +52,7 @@ func (p *Parcel) GetSize() (int, int) {
 func (p *Parcel) MarshalToFile(filename string) {
 	folderName := strings.Split(filename, "/")[0]
 
-	b, err := json.Marshal(p)
+	b, err := json.MarshalIndent(p, "", "\t")
 	if err != nil {
 		panic(err)
 	}
